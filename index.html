@@ -11,88 +11,134 @@ layout: null
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap');
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-        html { scroll-behavior: smooth; }
+        :root {
+            --bg: #EAE2D6;
+            --bg-strong: #DDD2C3;
+            --text: #2F2923;
+            --text-strong: #2A241F;
+            --text-muted: #6D6257;
+            --accent: #9C7A42;
+            --border: rgba(70, 55, 38, 0.10);
+            --border-soft: rgba(70, 55, 38, 0.08);
+            --header-height: 96px;
+            --header-padding-y: 15px;
+            --page-gutter: 5%;
+            --content-width: 1050px;
+            --footer-padding-y: 50px;
+        }
 
-        body, html {
+        html {
+            scroll-behavior: smooth;
+        }
+
+        html, body {
             margin: 0;
             padding: 0;
-            background-color: #EAE2D6;
+            min-height: 100%;
+            background-color: var(--bg);
             background-image:
                 radial-gradient(circle at 0% 20%, rgba(156, 122, 66, 0.08) 0%, transparent 38%),
                 radial-gradient(circle at 100% 85%, rgba(120, 102, 76, 0.06) 0%, transparent 40%);
             background-attachment: fixed;
-            color: #2F2923;
+            color: var(--text);
             font-family: 'Pretendard', sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        h1, h2, h3, .serif {
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, .serif {
             font-family: 'Noto Serif KR', serif;
             font-weight: 600;
         }
 
-        nav {
+        .site-header {
             position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
-            padding: 15px 0;
+            padding: var(--header-padding-y) 0;
             background: rgba(234, 226, 214, 0.82);
             backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
             z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .site-header-inner {
+            max-width: calc(var(--content-width) + (var(--page-gutter) * 2));
+            margin: 0 auto;
+            padding: 0 var(--page-gutter);
+            box-sizing: border-box;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(70, 55, 38, 0.10);
         }
 
         .nav-logo {
             display: flex;
             flex-direction: column;
             text-decoration: none;
-            margin-left: 5%;
+            flex-shrink: 0;
         }
 
         .nav-logo .serif {
             font-size: 2.4rem;
-            color: #2A241F;
+            color: var(--text-strong);
             letter-spacing: 2px;
             line-height: 1.1;
         }
 
         .nav-logo .logo-eng {
             font-size: 1rem;
-            color: #9C7A42;
+            color: var(--accent);
             font-family: 'Pretendard', sans-serif;
             letter-spacing: 3px;
             margin-top: 4px;
             font-weight: 300;
+            line-height: 1.1;
         }
 
         .nav-links {
-            margin-right: 5%;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
-            color: #6D6257;
+            color: var(--text-muted);
             text-decoration: none;
             margin-left: 30px;
             font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: color 0.3s;
+            white-space: nowrap;
         }
 
-        .nav-links a:hover {
-            color: #2A241F;
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-strong);
+        }
+
+        .site-main {
+            flex: 1;
+            display: block;
         }
 
         section {
-            padding: 50px 5%;
+            padding: 50px var(--page-gutter);
+            box-sizing: border-box;
         }
 
-        .section-inner {
-            max-width: 1050px;
+        .section-inner,
+        .hero-inner {
+            max-width: var(--content-width);
             margin: 0 auto;
             width: 100%;
         }
@@ -100,11 +146,11 @@ layout: null
         .section-title {
             font-size: 2.2rem;
             margin-bottom: 15px;
-            color: #2A241F;
+            color: var(--text-strong);
         }
 
         .section-desc {
-            color: #6D6257;
+            color: var(--text-muted);
             font-size: 1.05rem;
             margin-bottom: 56px;
             font-weight: 300;
@@ -117,6 +163,7 @@ layout: null
             align-items: center;
             overflow: hidden;
             isolation: isolate;
+            padding-top: calc(var(--header-height) + 40px);
         }
 
         .bg-video {
@@ -139,9 +186,6 @@ layout: null
         .hero-inner {
             position: relative;
             z-index: 2;
-            max-width: 1050px;
-            width: 100%;
-            margin: 0 auto;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -187,7 +231,7 @@ layout: null
             font-size: 1.15rem;
             font-family: 'Noto Serif KR', serif;
             font-weight: 300;
-            line-height: 2.0;
+            line-height: 2;
             margin-top: 8px;
             margin-bottom: 0;
             padding-left: 20px;
@@ -207,7 +251,7 @@ layout: null
             color: #F3EEE8;
             font-weight: 300;
             max-width: 800px;
-            line-height: 2.0;
+            line-height: 2;
             letter-spacing: 0.03em;
             word-break: keep-all;
             margin: 0;
@@ -228,11 +272,12 @@ layout: null
         .service-card {
             background: rgba(255, 248, 240, 0.62);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(70, 55, 38, 0.10);
+            border: 1px solid var(--border);
             padding: 45px 35px;
             transition: all 0.4s ease;
-            color: #2F2923;
+            color: var(--text);
             box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
+            box-sizing: border-box;
         }
 
         .service-card:hover {
@@ -247,12 +292,12 @@ layout: null
             margin-top: 0;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 1px solid rgba(70, 55, 38, 0.10);
-            color: #2A241F;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-strong);
         }
 
         .service-card p {
-            color: #6D6257;
+            color: var(--text-muted);
             font-size: 0.95rem;
             line-height: 1.7;
             margin: 0;
@@ -261,7 +306,7 @@ layout: null
 
         #blog-preview {
             background-color: rgba(221, 210, 195, 0.55);
-            border-top: 1px solid rgba(70, 55, 38, 0.08);
+            border-top: 1px solid var(--border-soft);
             position: relative;
         }
 
@@ -293,7 +338,7 @@ layout: null
             min-width: 300px;
             background: rgba(255, 248, 240, 0.62);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(70, 55, 38, 0.10);
+            border: 1px solid var(--border);
             padding: 35px 30px;
             scroll-snap-align: start;
             cursor: pointer;
@@ -302,6 +347,7 @@ layout: null
             flex-direction: column;
             justify-content: space-between;
             box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
+            box-sizing: border-box;
         }
 
         .carousel-card:hover {
@@ -321,12 +367,12 @@ layout: null
         .card-title {
             font-size: 1.3rem;
             margin: 0 0 15px 0;
-            color: #2A241F;
+            color: var(--text-strong);
             line-height: 1.4;
         }
 
         .card-excerpt {
-            color: #6D6257;
+            color: var(--text-muted);
             font-size: 0.95rem;
             line-height: 1.6;
             margin: 0;
@@ -339,8 +385,8 @@ layout: null
 
         .carousel-btn {
             background: rgba(255, 248, 240, 0.72);
-            border: 1px solid rgba(70, 55, 38, 0.10);
-            color: #2A241F;
+            border: 1px solid var(--border);
+            color: var(--text-strong);
             width: 45px;
             height: 45px;
             border-radius: 50%;
@@ -368,17 +414,27 @@ layout: null
             right: -20px;
         }
 
-        footer {
-            background-color: #DDD2C3;
-            border-top: 1px solid rgba(70, 55, 38, 0.08);
-            padding: 50px 5%;
+        .site-footer {
+            margin-top: auto;
+            background-color: var(--bg-strong);
+            border-top: 1px solid var(--border-soft);
+            padding: var(--footer-padding-y) var(--page-gutter);
             text-align: center;
-            color: #6D6257;
+            color: var(--text-muted);
             font-size: 0.85rem;
             font-weight: 300;
+            box-sizing: border-box;
+        }
+
+        .site-footer p {
+            margin: 0;
         }
 
         @media (max-width: 768px) {
+            :root {
+                --header-height: 88px;
+            }
+
             .carousel-card {
                 flex: 0 0 100%;
             }
@@ -393,6 +449,7 @@ layout: null
 
             #about {
                 min-height: 70vh;
+                padding-top: calc(var(--header-height) + 32px);
             }
 
             .nav-logo .serif {
@@ -407,102 +464,105 @@ layout: null
     </style>
 </head>
 <body>
-
-    <nav>
-        <a href="{{ '/' | relative_url }}" class="nav-logo">
-            <span class="serif">서낭</span>
-            <span class="logo-eng">SEONANG</span>
-        </a>
-        <div class="nav-links">
-            <a href="#about">About</a>
-            <a href="#services">Services</a>
-            <a href="{{ '/blog' | relative_url }}">Blog</a>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="{{ '/' | relative_url }}" class="nav-logo">
+                <span class="serif">서낭</span>
+                <span class="logo-eng">SEONANG</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#about">About</a>
+                <a href="#services">Services</a>
+                <a href="{{ '/blog' | relative_url }}">Blog</a>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <section id="about">
-        <video autoplay muted loop playsinline preload="auto" class="bg-video">
-            <source src="{{ '/bg-video.mp4' | relative_url }}" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
+    <main class="site-main">
+        <section id="about">
+            <video autoplay muted loop playsinline preload="auto" class="bg-video">
+                <source src="{{ '/bg-video.mp4' | relative_url }}" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
 
-        <div class="hero-inner">
-            <h2 class="hero-headline serif">경계에서 새로운 가치를 창출합니다.</h2>
+            <div class="hero-inner">
+                <h2 class="hero-headline serif">경계에서 새로운 가치를 창출합니다.</h2>
 
-            <div class="definition-box">
-                <h1>서낭</h1><span class="pos">[명사]</span>
-                <ol>
-                    <li>마을 어귀를 지키며 액운을 막는 토속신</li>
-                    <li>세계와 세계의 경계</li>
-                </ol>
+                <div class="definition-box">
+                    <h1>서낭</h1><span class="pos">[명사]</span>
+                    <ol>
+                        <li>마을 어귀를 지키며 액운을 막는 토속신</li>
+                        <li>세계와 세계의 경계</li>
+                    </ol>
+                </div>
+
+                <p class="hero-subtext serif">
+                    새로운 초월적 관계의 탄생, 세계와 세계가 연결되는 모든 지점을 찾습니다.
+                </p>
             </div>
+        </section>
 
-            <p class="hero-subtext serif">
-                새로운 초월적 관계의 탄생, 세계와 세계가 연결되는 모든 지점을 찾습니다.
-            </p>
-        </div>
-    </section>
+        <section id="services">
+            <div class="section-inner">
+                <h2 class="section-title">Business Areas</h2>
+                <p class="section-desc">서낭이 개척하고 연결하는 비즈니스의 주요 영역입니다.</p>
 
-    <section id="services">
-        <div class="section-inner">
-            <h2 class="section-title">Business Areas</h2>
-            <p class="section-desc">서낭이 개척하고 연결하는 비즈니스의 주요 영역입니다.</p>
-
-            <div class="grid-container">
-                <div class="service-card">
-                    <h3 class="serif">관계 시장 개척</h3>
-                    <p>기존 매칭 서비스의 한계를 넘어, 글로벌 시장에서 진정성 있는 인간관계와 연결을 창출하는 플랫폼 및 오프라인 비즈니스를 기획합니다.</p>
-                </div>
-                <div class="service-card">
-                    <h3 class="serif">M&A 및 재무 자문</h3>
-                    <p>중소·중견기업 및 스타트업의 생애주기 전반에 걸친 딜 클로징(Deal Closing)과 가치평가를 지원하며, 성공적인 투자 유치 전략을 수립합니다.</p>
-                </div>
-                <div class="service-card">
-                    <h3 class="serif">스타트업 전략 구조화</h3>
-                    <p>초기 자본 조달부터 린 스타트업(Lean Startup) 모델 기반의 비즈니스 고도화, IR 자료 재설계 등 CEO의 시각에서 핵심 과제를 해결합니다.</p>
-                </div>
-                <div class="service-card">
-                    <h3 class="serif">휴먼 인터랙션 서비스</h3>
-                    <p>어떠한 반응도 강요하지 않고 온전히 귀 기울여 듣는 텔레포닉 경청 서비스 등, 인간 본연의 고독을 해소하는 새로운 접점을 탐구합니다.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="blog-preview">
-        <div class="section-inner">
-            <h2 class="section-title">Blog</h2>
-            <p class="section-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
-
-            <div class="carousel-wrapper">
-                <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
-                <div class="carousel-track" id="carouselTrack">
-                    {% for post in site.posts %}
-                    <div class="carousel-card" onclick="location.href='{{ '/blog' | relative_url }}'">
-                        <div>
-                            <div class="card-date">{{ post.date | date: "%Y. %m. %d." }}</div>
-                            <h4 class="card-title serif">{{ post.title }}</h4>
-                        </div>
-                        <p class="card-excerpt">{{ post.excerpt | strip_html | truncatewords: 15 }}</p>
+                <div class="grid-container">
+                    <div class="service-card">
+                        <h3 class="serif">관계 시장 개척</h3>
+                        <p>기존 매칭 서비스의 한계를 넘어, 글로벌 시장에서 진정성 있는 인간관계와 연결을 창출하는 플랫폼 및 오프라인 비즈니스를 기획합니다.</p>
                     </div>
-                    {% endfor %}
-
-                    {% if site.posts.size == 0 %}
-                    <div class="carousel-card" onclick="location.href='{{ '/blog' | relative_url }}'">
-                        <div>
-                            <div class="card-date">2026. 03. 27.</div>
-                            <h4 class="card-title serif">첫 번째 블로그 기록</h4>
-                        </div>
-                        <p class="card-excerpt">아직 발행된 글이 없습니다. _posts 폴더에 마크다운(.md) 파일로 글을 작성하면 이곳에 카드가 자동으로 생성됩니다.</p>
+                    <div class="service-card">
+                        <h3 class="serif">M&A 및 재무 자문</h3>
+                        <p>중소·중견기업 및 스타트업의 생애주기 전반에 걸친 딜 클로징(Deal Closing)과 가치평가를 지원하며, 성공적인 투자 유치 전략을 수립합니다.</p>
                     </div>
-                    {% endif %}
+                    <div class="service-card">
+                        <h3 class="serif">스타트업 전략 구조화</h3>
+                        <p>초기 자본 조달부터 린 스타트업(Lean Startup) 모델 기반의 비즈니스 고도화, IR 자료 재설계 등 CEO의 시각에서 핵심 과제를 해결합니다.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3 class="serif">휴먼 인터랙션 서비스</h3>
+                        <p>어떠한 반응도 강요하지 않고 온전히 귀 기울여 듣는 텔레포닉 경청 서비스 등, 인간 본연의 고독을 해소하는 새로운 접점을 탐구합니다.</p>
+                    </div>
                 </div>
-                <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer>
+        <section id="blog-preview">
+            <div class="section-inner">
+                <h2 class="section-title">Blog</h2>
+                <p class="section-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
+
+                <div class="carousel-wrapper">
+                    <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
+                    <div class="carousel-track" id="carouselTrack">
+                        {% for post in site.posts %}
+                        <div class="carousel-card" onclick="location.href='{{ post.url | relative_url }}'">
+                            <div>
+                                <div class="card-date">{{ post.date | date: "%Y. %m. %d." }}</div>
+                                <h4 class="card-title serif">{{ post.title }}</h4>
+                            </div>
+                            <p class="card-excerpt">{{ post.excerpt | strip_html | truncatewords: 15 }}</p>
+                        </div>
+                        {% endfor %}
+
+                        {% if site.posts.size == 0 %}
+                        <div class="carousel-card" onclick="location.href='{{ '/blog' | relative_url }}'">
+                            <div>
+                                <div class="card-date">2026. 03. 27.</div>
+                                <h4 class="card-title serif">첫 번째 블로그 기록</h4>
+                            </div>
+                            <p class="card-excerpt">아직 발행된 글이 없습니다. _posts 폴더에 마크다운(.md) 파일로 글을 작성하면 이곳에 카드가 자동으로 생성됩니다.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
         <p>&copy; 2026 Seonang. All rights reserved.</p>
     </footer>
 
