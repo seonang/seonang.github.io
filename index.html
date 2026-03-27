@@ -8,67 +8,112 @@ layout: null
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>서낭 - Seonang</title>
     <style>
-        /* 최상급 브랜드 웹 폰트 로드 */
+        /* 웹 폰트 로드: 명조체(본명조) + 고딕체(프리텐다드) */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap');
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-        /* Classic & Professional Dark Theme */
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            background-color: #121212;
-            color: #F5F5F5;
-            font-family: 'Noto Serif KR', serif; /* 전체 기본 폰트를 본명조로 강제 */
-        }
+        /* 기본 설정 및 부드러운 스크롤 */
+        html { scroll-behavior: smooth; }
+        body, html { margin: 0; padding: 0; background-color: #121212; color: #F5F5F5; font-family: 'Pretendard', sans-serif; line-height: 1.6; }
+        
+        /* 타이포그래피 (제목은 명조체로 고정) */
+        h1, h2, h3, .serif { font-family: 'Noto Serif KR', serif; font-weight: 600; }
+
+        /* 상단 고정 네비게이션 바 (mstacc.com 스타일) */
+        nav { position: fixed; top: 0; width: 100%; padding: 20px 0; background: rgba(18,18,18,0.85); backdrop-filter: blur(10px); z-index: 1000; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; }
+        .nav-logo { font-size: 1.4rem; color: #fff; text-decoration: none; margin-left: 5%; letter-spacing: 2px; }
+        .nav-links { margin-right: 5%; }
+        .nav-links a { color: #aaaaaa; text-decoration: none; margin-left: 30px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; }
+        .nav-links a:hover { color: #ffffff; }
+
+        /* 섹션 공통 레이아웃 */
+        section { padding: 120px 5%; }
+        .section-inner { max-width: 1050px; margin: 0 auto; }
+        .section-title { font-size: 2.2rem; margin-bottom: 15px; color: #ffffff; }
+        .section-desc { color: #888888; font-size: 1.1rem; margin-bottom: 60px; font-weight: 300; }
+
+        /* 메인 Hero 화면 (서낭 정의) */
         .hero-section {
             background-image: linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)), url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            background-size: cover; background-position: center; height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
         }
-        .definition-box {
-            border-top: 1px solid rgba(255,255,255,0.4);
-            border-bottom: 1px solid rgba(255,255,255,0.4);
-            padding: 40px 20px;
-            max-width: 600px;
-            width: 85%;
-            text-align: left;
-        }
-        /* 폰트 두께(font-weight)를 섬세하게 조절하여 세련미 강조 */
-        h1 { font-size: 3rem; font-weight: 600; margin: 0; display: inline-block; letter-spacing: 2px; }
-        .pos { font-size: 1.2rem; font-weight: 300; color: #aaaaaa; margin-left: 10px; }
-        ol { font-size: 1.15rem; font-weight: 300; line-height: 1.8; margin-top: 25px; padding-left: 25px; }
-        li { margin-bottom: 15px; }
-        
-        .archive-btn {
-            margin-top: 60px;
-            padding: 12px 35px;
-            border: 1px solid #F5F5F5;
-            color: #F5F5F5;
-            text-decoration: none;
-            font-family: 'Pretendard', sans-serif; /* 버튼 UI는 프리텐다드로 모던하게 처리 */
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
-        .archive-btn:hover { background-color: #F5F5F5; color: #121212; }
+        .definition-box { border-top: 1px solid rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.3); padding: 40px 20px; max-width: 600px; width: 85%; text-align: left; }
+        .definition-box h1 { font-size: 3rem; margin: 0; display: inline-block; letter-spacing: 2px; }
+        .definition-box .pos { font-size: 1.2rem; font-weight: 300; color: #aaaaaa; margin-left: 10px; font-family: 'Pretendard', sans-serif; }
+        .definition-box ol { font-size: 1.15rem; font-family: 'Noto Serif KR', serif; font-weight: 300; line-height: 1.8; margin-top: 25px; padding-left: 25px; }
+        .definition-box li { margin-bottom: 15px; }
+
+        /* 비즈니스 영역 카드 그리드 (mstacc.com Service 레이아웃 모방) */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
+        .service-card { background-color: #1a1a1a; border: 1px solid #333333; padding: 45px 35px; transition: transform 0.3s, border-color 0.3s; }
+        .service-card:hover { transform: translateY(-5px); border-color: #ffffff; }
+        .service-card h3 { font-size: 1.5rem; margin-top: 0; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #333333; }
+        .service-card p { color: #aaaaaa; font-size: 0.95rem; line-height: 1.7; margin: 0; font-weight: 300; }
+
+        /* Footer */
+        footer { background-color: #0a0a0a; border-top: 1px solid #222; padding: 50px 5%; text-align: center; color: #666; font-size: 0.85rem; }
     </style>
 </head>
 <body>
-    <div class="hero-section">
+
+    <nav>
+        <a href="#" class="nav-logo serif">서낭</a>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="/blog">Archive</a>
+        </div>
+    </nav>
+
+    <div id="home" class="hero-section">
         <div class="definition-box">
             <h1>서낭</h1><span class="pos">[명사]</span>
             <ol>
-                <li>마을 어귀에서 액운을 막는 토속신</li>
+                <li>마을 어귀를 지키며 액운을 막는 토속신</li>
                 <li>세계와 세계의 경계, 접점</li>
             </ol>
         </div>
-        <a href="/blog" class="archive-btn">Enter Archive</a>
     </div>
+
+    <section id="about" style="background-color: #151515;">
+        <div class="section-inner">
+            <h2 class="section-title">경계에서 새로운 가치를 창출합니다</h2>
+            <p class="section-desc serif" style="font-size: 1.3rem; color: #cccccc;">
+                우리는 파편화된 세계들을 연결하여, 고립된 인간과 비즈니스에 단단한 구심점을 제공합니다.
+            </p>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="section-inner">
+            <h2 class="section-title">Business Areas</h2>
+            <p class="section-desc">서낭이 개척하고 연결하는 비즈니스의 주요 영역입니다.</p>
+            
+            <div class="grid-container">
+                <div class="service-card">
+                    <h3>관계 시장 개척</h3>
+                    <p>기존 매칭 서비스의 한계를 넘어, 글로벌 시장에서 진정성 있는 인간관계와 연결을 창출하는 플랫폼 및 오프라인 비즈니스를 기획합니다.</p>
+                </div>
+                <div class="service-card">
+                    <h3>M&A 및 재무 자문</h3>
+                    <p>중소·중견기업 및 스타트업의 생애주기 전반에 걸친 딜 클로징(Deal Closing)과 가치평가를 지원하며, 성공적인 투자 유치 전략을 수립합니다.</p>
+                </div>
+                <div class="service-card">
+                    <h3>스타트업 전략 구조화</h3>
+                    <p>초기 자본 조달부터 린 스타트업(Lean Startup) 모델 기반의 비즈니스 고도화, IR 자료 재설계 등 CEO의 시각에서 핵심 과제를 해결합니다.</p>
+                </div>
+                <div class="service-card">
+                    <h3>휴먼 인터랙션 서비스</h3>
+                    <p>어떠한 반응도 강요하지 않고 온전히 귀 기울여 듣는 텔레포닉 경청 서비스 등, 인간 본연의 고독을 해소하는 새로운 접점을 탐구합니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Seonang. All rights reserved.</p>
+    </footer>
+
 </body>
 </html>
