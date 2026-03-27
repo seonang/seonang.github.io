@@ -2,6 +2,7 @@
 layout: default
 title: 서낭 - Seonang
 ---
+
 <section id="about">
     <video autoplay muted loop playsinline preload="auto" class="bg-video">
         <source src="{{ '/assets/videos/bg-video.mp4' | relative_url }}" type="video/mp4">
@@ -27,35 +28,62 @@ title: 서낭 - Seonang
 
 <section id="portfolio">
     <div class="section-inner">
-        <h2 class="section-title">Portfolio</h2>
-        <p class="section-desc">서낭이 개척하고 연결해온 주요 포트폴리오입니다.</p>
+        <div class="section-heading">
+            <div>
+                <h2 class="section-title">Portfolio</h2>
+                <p class="section-desc">서낭이 개척하고 연결해온 주요 포트폴리오입니다.</p>
+            </div>
+            <a href="{{ '/portfolio' | relative_url }}" class="section-more">View all</a>
+        </div>
 
-        <div class="portfolio-grid">
-            {% for item in site.portfolio %}
-            <article class="portfolio-card" onclick="location.href='{{ item.url | relative_url }}'">
-                {% if item.thumbnail %}
-                <div class="portfolio-thumb">
-                    <img src="{{ item.thumbnail | relative_url }}" alt="{{ item.title }}">
+        <div class="carousel-wrapper">
+            <button class="carousel-btn prev" type="button" onclick="movePortfolioCarousel(-1)">&#10094;</button>
+
+            <div class="carousel-track portfolio-track" id="portfolioTrack">
+                {% assign sorted_portfolio = site.portfolio | sort: "date" | reverse %}
+                {% for item in sorted_portfolio %}
+                <article class="portfolio-card carousel-portfolio-card" onclick="location.href='{{ item.url | relative_url }}'">
+                    {% if item.thumbnail %}
+                    <div class="portfolio-thumb">
+                        <img src="{{ item.thumbnail | relative_url }}" alt="{{ item.title }}">
+                    </div>
+                    {% endif %}
+                    <div class="portfolio-body">
+                        <div class="card-date">{{ item.date | date: "%Y. %m. %d." }}</div>
+                        <h3 class="serif">{{ item.title }}</h3>
+                        <p>{{ item.excerpt }}</p>
+                    </div>
+                </article>
+                {% endfor %}
+
+                {% if site.portfolio.size == 0 %}
+                <div class="portfolio-card carousel-portfolio-card" onclick="location.href='{{ '/portfolio' | relative_url }}'">
+                    <div class="portfolio-body">
+                        <div class="card-date">준비 중</div>
+                        <h3 class="serif">포트폴리오가 곧 채워집니다</h3>
+                        <p>아직 등록된 포트폴리오가 없습니다. 첫 항목이 등록되면 이곳에 자동으로 표시됩니다.</p>
+                    </div>
                 </div>
                 {% endif %}
+            </div>
 
-                <div class="portfolio-body">
-                    <h3 class="serif">{{ item.title }}</h3>
-                    <p>{{ item.excerpt }}</p>
-                </div>
-            </article>
-            {% endfor %}
+            <button class="carousel-btn next" type="button" onclick="movePortfolioCarousel(1)">&#10095;</button>
         </div>
     </div>
 </section>
 
 <section id="blog">
     <div class="section-inner">
-        <h2 class="section-title">Blog</h2>
-        <p class="section-desc">서낭의 생각과 기록, 진행 중인 실험들을 기록합니다.</p>
+        <div class="section-heading">
+            <div>
+                <h2 class="section-title">Blog</h2>
+                <p class="section-desc">서낭의 생각과 기록, 진행 중인 실험들을 기록합니다.</p>
+            </div>
+            <a href="{{ '/blog' | relative_url }}" class="section-more">View all</a>
+        </div>
 
         <div class="carousel-wrapper">
-            <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
+            <button class="carousel-btn prev" type="button" onclick="moveCarousel(-1)">&#10094;</button>
 
             <div class="carousel-track" id="carouselTrack">
                 {% for post in site.posts %}
@@ -79,7 +107,43 @@ title: 서낭 - Seonang
                 {% endif %}
             </div>
 
-            <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
+            <button class="carousel-btn next" type="button" onclick="moveCarousel(1)">&#10095;</button>
         </div>
     </div>
 </section>
+
+<script>
+function moveCarousel(direction) {
+    const track = document.getElementById('carouselTrack');
+    if (!track) return;
+
+    const card = track.querySelector('.carousel-card');
+    if (!card) return;
+
+    const style = window.getComputedStyle(track);
+    const gap = parseInt(style.columnGap || style.gap || 20, 10) || 20;
+    const scrollAmount = card.offsetWidth + gap;
+
+    track.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+    });
+}
+
+function movePortfolioCarousel(direction) {
+    const track = document.getElementById('portfolioTrack');
+    if (!track) return;
+
+    const card = track.querySelector('.carousel-portfolio-card');
+    if (!card) return;
+
+    const style = window.getComputedStyle(track);
+    const gap = parseInt(style.columnGap || style.gap || 20, 10) || 20;
+    const scrollAmount = card.offsetWidth + gap;
+
+    track.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+    });
+}
+</script>
