@@ -8,15 +8,18 @@ layout: null
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>서낭 - Seonang</title>
     <style>
+        /* 최상급 브랜드 웹 폰트 로드 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap');
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
         /* Classic & Professional Dark Theme */
         body, html {
             margin: 0; padding: 0; height: 100%;
             background-color: #121212;
             color: #F5F5F5;
-            font-family: 'Nanum Myeongjo', 'Batang', serif;
+            font-family: 'Noto Serif KR', serif; /* 전체 기본 폰트를 본명조로 강제 */
         }
         .hero-section {
-            /* 어두운 배경 이미지와 필터 적용 */
             background-image: linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)), url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
@@ -35,9 +38,10 @@ layout: null
             width: 85%;
             text-align: left;
         }
-        h1 { font-size: 3rem; font-weight: normal; margin: 0; display: inline-block; letter-spacing: 2px; }
-        .pos { font-size: 1.2rem; color: #aaaaaa; margin-left: 10px; }
-        ol { font-size: 1.15rem; line-height: 1.8; margin-top: 25px; padding-left: 25px; }
+        /* 폰트 두께(font-weight)를 섬세하게 조절하여 세련미 강조 */
+        h1 { font-size: 3rem; font-weight: 600; margin: 0; display: inline-block; letter-spacing: 2px; }
+        .pos { font-size: 1.2rem; font-weight: 300; color: #aaaaaa; margin-left: 10px; }
+        ol { font-size: 1.15rem; font-weight: 300; line-height: 1.8; margin-top: 25px; padding-left: 25px; }
         li { margin-bottom: 15px; }
         
         .archive-btn {
@@ -46,7 +50,7 @@ layout: null
             border: 1px solid #F5F5F5;
             color: #F5F5F5;
             text-decoration: none;
-            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-family: 'Pretendard', sans-serif; /* 버튼 UI는 프리텐다드로 모던하게 처리 */
             font-size: 0.9rem;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -60,8 +64,8 @@ layout: null
         <div class="definition-box">
             <h1>서낭</h1><span class="pos">[명사]</span>
             <ol>
-                <li>마을 경계를 지키며 액운을 막아주는 토속신</li>
-                <li>세계와 세계가 맞닿아 연결되는 접점</li>
+                <li>마을 어귀를 지키며 액운을 막는 토속신</li>
+                <li>세계와 세계의 경계, 접점</li>
             </ol>
         </div>
         <a href="/blog" class="archive-btn">Enter Archive</a>
