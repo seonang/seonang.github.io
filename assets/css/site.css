@@ -4,7 +4,6 @@
 :root {
     --bg: #EAE2D6;
     --bg-strong: #DDD2C3;
-    --surface: #F6F1E9;    
     --text: #2F2923;
     --text-strong: #2A241F;
     --text-muted: #6D6257;
@@ -250,7 +249,8 @@ section {
 }
 
 .service-card {
-    background: var(--surface);
+    background: rgba(255, 248, 240, 0.62);
+    backdrop-filter: blur(10px);
     border: 1px solid var(--border);
     padding: 28px 24px;
     box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
@@ -295,7 +295,8 @@ section {
 .carousel-card {
     flex: 0 0 calc(33.333% - 14px);
     min-width: 300px;
-    background: var(--surface);
+    background: rgba(255, 248, 240, 0.62);
+    backdrop-filter: blur(10px);
     border: 1px solid var(--border);
     padding: 35px 30px;
     scroll-snap-align: start;
@@ -309,9 +310,9 @@ section {
 }
 
 .carousel-card:hover {
-    border-color: rgba(156, 122, 66, 0.28);
+    border-color: rgba(156, 122, 66, 0.35);
     transform: translateY(-4px);
-    background: #F8F4ED;
+    background: rgba(255, 250, 244, 0.82);
     box-shadow: 0 14px 32px rgba(80, 62, 38, 0.10);
 }
 
@@ -418,7 +419,8 @@ section {
     justify-content: space-between;
     min-height: 240px;
     padding: 34px 30px;
-    background: var(--surface);
+    background: rgba(255, 248, 240, 0.62);
+    backdrop-filter: blur(10px);
     border: 1px solid var(--border);
     text-decoration: none;
     color: inherit;
@@ -429,8 +431,8 @@ section {
 
 .post-card:hover {
     transform: translateY(-4px);
-    border-color: rgba(156, 122, 66, 0.28);
-    background: #F8F4ED;
+    border-color: rgba(156, 122, 66, 0.35);
+    background: rgba(255, 250, 244, 0.82);
     box-shadow: 0 14px 32px rgba(80, 62, 38, 0.10);
 }
 
@@ -616,7 +618,6 @@ body.post-template .post-date {
     line-height: 1.18;
     color: var(--text-strong);
     white-space: nowrap;
-
 }
 
 .contact-lead {
@@ -628,7 +629,8 @@ body.post-template .post-date {
 }
 
 .contact-form-wrap {
-    background: var(--surface);
+    background: rgba(255, 248, 240, 0.62);
+    backdrop-filter: blur(10px);
     border: 1px solid var(--border);
     box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
     padding: 40px 40px 36px;
@@ -657,14 +659,15 @@ body.post-template .post-date {
 .form-row input,
 .form-row textarea {
     width: 100%;
-    border: 1px solid rgba(34, 29, 24, 0.10);
-    background: var(--surface);
-    padding: 14px 16px;
+    border: none;
+    border-bottom: 1px solid rgba(34, 29, 24, 0.18);
+    background: transparent;
+    padding: 10px 0 12px;
     font: inherit;
     font-size: 1rem;
     color: var(--text-strong);
     outline: none;
-    border-radius: 2px;
+    border-radius: 0;
     box-sizing: border-box;
 }
 
@@ -675,8 +678,7 @@ body.post-template .post-date {
 
 .form-row input:focus,
 .form-row textarea:focus {
-    border-color: rgba(47, 41, 35, 0.22);
-    background: #F8F4ED;
+    border-bottom-color: var(--text-strong);
 }
 
 .contact-form button {
@@ -805,5 +807,6 @@ body.post-template .post-date {
 
     .contact-title {
         font-size: 2rem;
+        white-space: normal;
     }
 }
