@@ -11,8 +11,9 @@ permalink: /portfolio/
             <p class="page-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
         </header>
 
+        {% assign sorted_portfolio = site.portfolio | sort: "date" | reverse %}
+        {% if sorted_portfolio.size > 0 %}
         <div class="portfolio-grid portfolio-list-grid">
-            {% assign sorted_portfolio = site.portfolio | sort: "date" | reverse %}
             {% for item in sorted_portfolio %}
             <article class="portfolio-card portfolio-list-card" onclick="location.href='{{ item.url | relative_url }}'">
                 {% if item.thumbnail %}
@@ -28,5 +29,8 @@ permalink: /portfolio/
             </article>
             {% endfor %}
         </div>
+        {% else %}
+        <div class="empty-state">아직 등록된 포트폴리오가 없습니다.</div>
+        {% endif %}
     </div>
 </section>
