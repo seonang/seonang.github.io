@@ -11,20 +11,46 @@ layout: null
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap');
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-        html { scroll-behavior: smooth; }
+        :root {
+            --bg: #EAE2D6;
+            --bg-strong: #DDD2C3;
+            --text: #2F2923;
+            --text-strong: #2A241F;
+            --text-muted: #6D6257;
+            --accent: #9C7A42;
+            --border: rgba(70, 55, 38, 0.10);
+            --border-soft: rgba(70, 55, 38, 0.08);
+            --header-height: 96px;
+            --header-padding-y: 15px;
+            --page-gutter: 5%;
+            --content-width: 1050px;
+            --post-width: 860px;
+            --footer-padding-y: 50px;
+        }
 
-        body, html {
+        html {
+            scroll-behavior: smooth;
+        }
+
+        html, body {
             margin: 0;
             padding: 0;
-            background-color: #EAE2D6;
+            min-height: 100%;
+            background-color: var(--bg);
             background-image:
                 radial-gradient(circle at 0% 20%, rgba(156, 122, 66, 0.08) 0%, transparent 38%),
                 radial-gradient(circle at 100% 85%, rgba(120, 102, 76, 0.06) 0%, transparent 40%);
             background-attachment: fixed;
-            color: #2F2923;
+            color: var(--text);
             font-family: 'Pretendard', sans-serif;
             line-height: 1.8;
             overflow-x: hidden;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         h1, h2, h3, h4, .serif {
@@ -32,71 +58,95 @@ layout: null
             font-weight: 600;
         }
 
-        nav {
+        .site-header {
             position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
-            padding: 15px 0;
+            padding: var(--header-padding-y) 0;
             background: rgba(234, 226, 214, 0.82);
             backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
             z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .site-header-inner {
+            max-width: calc(var(--content-width) + (var(--page-gutter) * 2));
+            margin: 0 auto;
+            padding: 0 var(--page-gutter);
+            box-sizing: border-box;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(70, 55, 38, 0.10);
         }
 
         .nav-logo {
             display: flex;
             flex-direction: column;
             text-decoration: none;
-            margin-left: 5%;
+            flex-shrink: 0;
         }
 
         .nav-logo .serif {
             font-size: 2.4rem;
-            color: #2A241F;
+            color: var(--text-strong);
             letter-spacing: 2px;
             line-height: 1.1;
         }
 
         .nav-logo .logo-eng {
             font-size: 1rem;
-            color: #9C7A42;
+            color: var(--accent);
             font-family: 'Pretendard', sans-serif;
             letter-spacing: 3px;
             margin-top: 4px;
             font-weight: 300;
+            line-height: 1.1;
         }
 
         .nav-links {
-            margin-right: 5.2%;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
-            color: #6D6257;
+            color: var(--text-muted);
             text-decoration: none;
             margin-left: 30px;
             font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: color 0.3s;
+            white-space: nowrap;
         }
 
-        .nav-links a:hover {
-            color: #2A241F;
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-strong);
+        }
+
+        .site-main {
+            flex: 1;
+            display: block;
+        }
+
+        .post-page {
+            padding: calc(var(--header-height) + 54px) var(--page-gutter) 90px;
+            box-sizing: border-box;
         }
 
         .post-wrap {
-            max-width: 860px;
+            max-width: var(--post-width);
             margin: 0 auto;
-            padding: 150px 5% 90px;
+            width: 100%;
         }
 
         .post-header {
             margin-bottom: 48px;
             padding-bottom: 28px;
-            border-bottom: 1px solid rgba(70, 55, 38, 0.10);
+            border-bottom: 1px solid var(--border);
         }
 
         .post-date {
@@ -110,12 +160,12 @@ layout: null
             font-size: 3rem;
             line-height: 1.3;
             margin: 0 0 14px 0;
-            color: #2A241F;
+            color: var(--text-strong);
             word-break: keep-all;
         }
 
         .post-subtitle {
-            color: #6D6257;
+            color: var(--text-muted);
             font-size: 1.05rem;
             font-weight: 300;
             margin: 0;
@@ -133,7 +183,7 @@ layout: null
         .post-content h2,
         .post-content h3,
         .post-content h4 {
-            color: #2A241F;
+            color: var(--text-strong);
             margin-top: 2.4em;
             margin-bottom: 0.8em;
             line-height: 1.4;
@@ -176,44 +226,50 @@ layout: null
 
         .post-content hr {
             border: 0;
-            border-top: 1px solid rgba(70, 55, 38, 0.10);
+            border-top: 1px solid var(--border);
             margin: 2.5em 0;
         }
 
         .post-bottom-nav {
             margin-top: 64px;
             padding-top: 28px;
-            border-top: 1px solid rgba(70, 55, 38, 0.10);
+            border-top: 1px solid var(--border);
         }
 
         .back-to-blog {
             display: inline-block;
-            color: #6D6257;
+            color: var(--text-muted);
             text-decoration: none;
             font-size: 0.95rem;
         }
 
         .back-to-blog:hover {
-            color: #2A241F;
+            color: var(--text-strong);
         }
 
-        footer {
-            background-color: #DDD2C3;
-            border-top: 1px solid rgba(70, 55, 38, 0.08);
-            padding: 50px 5%;
+        .site-footer {
+            margin-top: auto;
+            background-color: var(--bg-strong);
+            border-top: 1px solid var(--border-soft);
+            padding: var(--footer-padding-y) var(--page-gutter);
             text-align: center;
-            color: #6D6257;
+            color: var(--text-muted);
             font-size: 0.85rem;
             font-weight: 300;
+            box-sizing: border-box;
+        }
+
+        .site-footer p {
+            margin: 0;
         }
 
         @media (max-width: 768px) {
-            .nav-logo .serif {
-                font-size: 2rem;
+            :root {
+                --header-height: 88px;
             }
 
-            .nav-links {
-                margin-right: 5%;
+            .nav-logo .serif {
+                font-size: 2rem;
             }
 
             .nav-links a {
@@ -221,8 +277,8 @@ layout: null
                 font-size: 0.88rem;
             }
 
-            .post-wrap {
-                padding-top: 130px;
+            .post-page {
+                padding-top: calc(var(--header-height) + 40px);
                 padding-bottom: 70px;
             }
 
@@ -237,40 +293,44 @@ layout: null
     </style>
 </head>
 <body>
-
-    <nav>
-        <a href="{{ '/' | relative_url }}" class="nav-logo">
-            <span class="serif">서낭</span>
-            <span class="logo-eng">SEONANG</span>
-        </a>
-        <div class="nav-links">
-            <a href="{{ '/#about' | relative_url }}">About</a>
-            <a href="{{ '/#services' | relative_url }}">Services</a>
-            <a href="{{ '/blog' | relative_url }}">Blog</a>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="{{ '/' | relative_url }}" class="nav-logo">
+                <span class="serif">서낭</span>
+                <span class="logo-eng">SEONANG</span>
+            </a>
+            <nav class="nav-links">
+                <a href="{{ '/#about' | relative_url }}">About</a>
+                <a href="{{ '/#services' | relative_url }}">Services</a>
+                <a href="{{ '/blog' | relative_url }}" class="active">Blog</a>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <main class="post-wrap">
-        <header class="post-header">
-            <div class="post-date">{{ page.date | date: "%Y. %m. %d." }}</div>
-            <h1 class="post-title serif">{{ page.title }}</h1>
-            {% if page.description %}
-            <p class="post-subtitle">{{ page.description }}</p>
-            {% endif %}
-        </header>
+    <main class="site-main">
+        <section class="post-page">
+            <div class="post-wrap">
+                <header class="post-header">
+                    <div class="post-date">{{ page.date | date: "%Y. %m. %d." }}</div>
+                    <h1 class="post-title serif">{{ page.title }}</h1>
+                    {% if page.description %}
+                    <p class="post-subtitle">{{ page.description }}</p>
+                    {% endif %}
+                </header>
 
-        <article class="post-content">
-            {{ content }}
-        </article>
+                <article class="post-content">
+                    {{ content }}
+                </article>
 
-        <div class="post-bottom-nav">
-            <a class="back-to-blog" href="{{ '/blog' | relative_url }}">← Blog로 돌아가기</a>
-        </div>
+                <div class="post-bottom-nav">
+                    <a class="back-to-blog" href="{{ '/blog' | relative_url }}">← Blog로 돌아가기</a>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer>
+    <footer class="site-footer">
         <p>&copy; 2026 Seonang. All rights reserved.</p>
     </footer>
-
 </body>
 </html>
