@@ -584,27 +584,19 @@ body.post-template .post-date {
 }
 
 /* Contact */
+/* Contact */
 .contact-page {
     padding: calc(var(--header-height) + 54px) var(--page-gutter) 100px;
     box-sizing: border-box;
 }
 
-.contact-layout {
-    max-width: var(--content-width);
+.contact-single {
+    max-width: 760px;
     margin: 0 auto;
     width: 100%;
-    display: grid;
-    grid-template-columns: minmax(260px, 0.9fr) minmax(420px, 1.1fr);
-    gap: 72px;
-    align-items: start;
 }
 
-.contact-intro {
-    position: sticky;
-    top: 120px;
-}
-
-.contact-eyebrow {
+.contact-kicker {
     margin: 0 0 18px 0;
     font-size: 0.78rem;
     letter-spacing: 0.18em;
@@ -613,22 +605,26 @@ body.post-template .post-date {
 }
 
 .contact-title {
-    margin: 0 0 20px 0;
-    font-size: clamp(1.7rem, 2.4vw, 2.5rem);
-    line-height: 1.18;
+    margin: 0 0 18px 0;
+    font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+    line-height: 1.2;
     color: var(--text-strong);
     white-space: nowrap;
+    text-align: left;
 }
 
 .contact-lead {
-    margin: 0;
+    margin: 0 0 42px 0;
     font-size: 1rem;
-    line-height: 1.9;
+    line-height: 1.8;
     color: rgba(34, 29, 24, 0.78);
     font-weight: 300;
+    white-space: nowrap;
+    text-align: left;
 }
 
 .contact-form-wrap {
+    width: 100%;
     background: rgba(255, 248, 240, 0.62);
     backdrop-filter: blur(10px);
     border: 1px solid var(--border);
