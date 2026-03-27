@@ -5,28 +5,36 @@ permalink: /contact/
 ---
 
 <section class="contact-page">
-    <div class="section-inner narrow">
-        <h1 class="section-title">Contact</h1>
-        <p class="section-desc">문의 내용을 남겨주시면 확인 후 회신드리겠습니다.</p>
+    <div class="section-inner contact-layout">
+        <div class="contact-intro">
+            <p class="contact-eyebrow">Contact</p>
+            <h1 class="contact-title serif">서낭과의 연결을 기다립니다.</h1>
+            <p class="contact-lead">
+                협업, 제안, 브랜드 및 프로젝트 관련 문의를 남겨주시면
+                확인 후 회신드리겠습니다.
+            </p>
+        </div>
 
-        <form id="contact-form" class="contact-form">
-            <div class="form-row">
-                <label for="name">이름</label>
-                <input type="text" id="name" name="name" required>
-            </div>
+        <div class="contact-form-wrap">
+            <form id="contact-form" class="contact-form">
+                <div class="form-row">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
 
-            <div class="form-row">
-                <label for="email">이메일</label>
-                <input type="email" id="email" name="email" required>
-            </div>
+                <div class="form-row">
+                    <label for="contact">Contact</label>
+                    <input type="text" id="contact" name="contact" required>
+                </div>
 
-            <div class="form-row">
-                <label for="message">문의 내용</label>
-                <textarea id="message" name="message" rows="8" required></textarea>
-            </div>
+                <div class="form-row">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="8" required></textarea>
+                </div>
 
-            <button type="submit">문의 보내기</button>
-            <p id="form-status" class="form-status"></p>
-        </form>
+                <button type="submit">Send Inquiry</button>
+                <p id="form-status" class="form-status"></p>
+            </form>
+        </div>
     </div>
 </section>
