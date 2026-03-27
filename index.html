@@ -1,580 +1,102 @@
 ---
-layout: null
+layout: default
 ---
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>서낭 - Seonang</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap');
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-        :root {
-            --bg: #EAE2D6;
-            --bg-strong: #DDD2C3;
-            --text: #2F2923;
-            --text-strong: #2A241F;
-            --text-muted: #6D6257;
-            --accent: #9C7A42;
-            --border: rgba(70, 55, 38, 0.10);
-            --border-soft: rgba(70, 55, 38, 0.08);
-            --header-height: 96px;
-            --header-padding-y: 15px;
-            --page-gutter: 5%;
-            --content-width: 1050px;
-            --footer-padding-y: 50px;
-        }
+<section id="about">
+    <video autoplay muted loop playsinline preload="auto" class="bg-video">
+        <source src="{{ '/bg-video.mp4' | relative_url }}" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
 
-        html {
-            scroll-behavior: smooth;
-        }
+    <div class="site-shell">
+        <div class="hero-inner">
+            <h2 class="hero-headline serif">경계에서 새로운 가치를 창출합니다.</h2>
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            min-height: 100%;
-            background-color: var(--bg);
-            background-image:
-                radial-gradient(circle at 0% 20%, rgba(156, 122, 66, 0.08) 0%, transparent 38%),
-                radial-gradient(circle at 100% 85%, rgba(120, 102, 76, 0.06) 0%, transparent 40%);
-            background-attachment: fixed;
-            color: var(--text);
-            font-family: 'Pretendard', sans-serif;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+            <div class="definition-box">
+                <h1>서낭</h1><span class="pos">[명사]</span>
+                <ol>
+                    <li>마을 어귀를 지키며 액운을 막는 토속신</li>
+                    <li>세계와 세계의 경계</li>
+                </ol>
+            </div>
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        h1, h2, h3, h4, .serif {
-            font-family: 'Noto Serif KR', serif;
-            font-weight: 600;
-        }
-
-        .site-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: var(--header-padding-y) 0;
-            background: rgba(234, 226, 214, 0.82);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            box-sizing: border-box;
-        }
-
-        .site-header-inner {
-            max-width: calc(var(--content-width) + (var(--page-gutter) * 2));
-            margin: 0 auto;
-            padding: 0 var(--page-gutter);
-            box-sizing: border-box;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-logo {
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-
-        .nav-logo .serif {
-            font-size: 2.4rem;
-            color: var(--text-strong);
-            letter-spacing: 2px;
-            line-height: 1.1;
-        }
-
-        .nav-logo .logo-eng {
-            font-size: 1rem;
-            color: var(--accent);
-            font-family: 'Pretendard', sans-serif;
-            letter-spacing: 3px;
-            margin-top: 4px;
-            font-weight: 300;
-            line-height: 1.1;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            margin-left: 30px;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: color 0.3s;
-            white-space: nowrap;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--text-strong);
-        }
-
-        .site-main {
-            flex: 1;
-            display: block;
-        }
-
-        section {
-            padding: 50px var(--page-gutter);
-            box-sizing: border-box;
-        }
-
-        .section-inner,
-        .hero-inner {
-            max-width: var(--content-width);
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .section-title {
-            font-size: 2.2rem;
-            margin-bottom: 15px;
-            color: var(--text-strong);
-        }
-
-        .section-desc {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            margin-bottom: 56px;
-            font-weight: 300;
-        }
-
-        #about {
-            position: relative;
-            min-height: 76vh;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            isolation: isolate;
-            padding-top: calc(var(--header-height) + 40px);
-        }
-
-        .bg-video {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
-            filter: brightness(1.1);
-        }
-
-        .video-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(rgba(10, 10, 10, 0.32), rgba(10, 10, 10, 0.58));
-            z-index: 1;
-        }
-
-        .hero-inner {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .hero-headline {
-            font-size: 3.2rem;
-            color: #ffffff;
-            margin: 0 0 28px 0;
-            word-break: keep-all;
-            line-height: 1.3;
-            text-align: left;
-        }
-
-        .definition-box {
-            border-top: 1px solid rgba(255,255,255,0.34);
-            border-bottom: 1px solid rgba(255,255,255,0.34);
-            padding: 20px 0;
-            max-width: 600px;
-            width: 100%;
-            text-align: left;
-            margin-bottom: 15px;
-            background: transparent;
-        }
-
-        .definition-box h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            display: inline-block;
-            letter-spacing: 2px;
-            color: #ffffff;
-        }
-
-        .definition-box .pos {
-            font-size: 1.1rem;
-            font-weight: 300;
-            color: rgba(255,255,255,0.74);
-            margin-left: 10px;
-            font-family: 'Pretendard', sans-serif;
-        }
-
-        .definition-box ol {
-            font-size: 1.15rem;
-            font-family: 'Noto Serif KR', serif;
-            font-weight: 300;
-            line-height: 2;
-            margin-top: 8px;
-            margin-bottom: 0;
-            padding-left: 20px;
-            color: rgba(255,255,255,0.90);
-        }
-
-        .definition-box li {
-            margin-bottom: 6px;
-        }
-
-        .definition-box li:last-child {
-            margin-bottom: 0;
-        }
-
-        .hero-subtext {
-            font-size: 1.34rem;
-            color: #F3EEE8;
-            font-weight: 300;
-            max-width: 800px;
-            line-height: 2;
-            letter-spacing: 0.03em;
-            word-break: keep-all;
-            margin: 0;
-            text-align: left;
-        }
-
-        #services {
-            background: transparent;
-            padding-bottom: 125px;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .service-card {
-            background: rgba(255, 248, 240, 0.62);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            padding: 45px 35px;
-            transition: all 0.4s ease;
-            color: var(--text);
-            box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
-            box-sizing: border-box;
-        }
-
-        .service-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(156, 122, 66, 0.35);
-            background: rgba(255, 250, 244, 0.82);
-            box-shadow: 0 14px 32px rgba(80, 62, 38, 0.10);
-        }
-
-        .service-card h3 {
-            font-size: 1.5rem;
-            margin-top: 0;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-strong);
-        }
-
-        .service-card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.7;
-            margin: 0;
-            font-weight: 300;
-        }
-
-        #blog-preview {
-            background-color: rgba(221, 210, 195, 0.55);
-            border-top: 1px solid var(--border-soft);
-            position: relative;
-        }
-
-        .carousel-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-top: 40px;
-        }
-
-        .carousel-track {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            padding: 10px 0;
-            width: 100%;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .carousel-track::-webkit-scrollbar {
-            display: none;
-        }
-
-        .carousel-card {
-            flex: 0 0 calc(33.333% - 14px);
-            min-width: 300px;
-            background: rgba(255, 248, 240, 0.62);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            padding: 35px 30px;
-            scroll-snap-align: start;
-            cursor: pointer;
-            transition: all 0.4s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
-            box-sizing: border-box;
-        }
-
-        .carousel-card:hover {
-            border-color: rgba(156, 122, 66, 0.35);
-            transform: translateY(-4px);
-            background: rgba(255, 250, 244, 0.82);
-            box-shadow: 0 14px 32px rgba(80, 62, 38, 0.10);
-        }
-
-        .card-date {
-            color: #7A6D61;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
-            font-weight: 300;
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            margin: 0 0 15px 0;
-            color: var(--text-strong);
-            line-height: 1.4;
-        }
-
-        .card-excerpt {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin: 0;
-            font-weight: 300;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .carousel-btn {
-            background: rgba(255, 248, 240, 0.72);
-            border: 1px solid var(--border);
-            color: var(--text-strong);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            z-index: 10;
-            transition: all 0.3s;
-            font-size: 1.2rem;
-            backdrop-filter: blur(6px);
-        }
-
-        .carousel-btn:hover {
-            background: rgba(156, 122, 66, 0.12);
-            border-color: rgba(156, 122, 66, 0.30);
-        }
-
-        .carousel-btn.prev {
-            left: -20px;
-        }
-
-        .carousel-btn.next {
-            right: -20px;
-        }
-
-        .site-footer {
-            margin-top: auto;
-            background-color: var(--bg-strong);
-            border-top: 1px solid var(--border-soft);
-            padding: var(--footer-padding-y) var(--page-gutter);
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            font-weight: 300;
-            box-sizing: border-box;
-        }
-
-        .site-footer p {
-            margin: 0;
-        }
-
-        @media (max-width: 768px) {
-            :root {
-                --header-height: 88px;
-            }
-
-            .carousel-card {
-                flex: 0 0 100%;
-            }
-
-            .carousel-btn {
-                display: none;
-            }
-
-            .hero-headline {
-                font-size: 2.2rem;
-            }
-
-            #about {
-                min-height: 70vh;
-                padding-top: calc(var(--header-height) + 32px);
-            }
-
-            .nav-logo .serif {
-                font-size: 2rem;
-            }
-
-            .nav-links a {
-                margin-left: 18px;
-                font-size: 0.88rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header class="site-header">
-        <div class="site-header-inner">
-            <a href="{{ '/' | relative_url }}" class="nav-logo">
-                <span class="serif">서낭</span>
-                <span class="logo-eng">SEONANG</span>
-            </a>
-            <nav class="nav-links">
-                <a href="#about">About</a>
-                <a href="#services">Services</a>
-                <a href="{{ '/blog' | relative_url }}">Blog</a>
-            </nav>
+            <p class="hero-subtext serif">
+                새로운 초월적 관계의 탄생, 세계와 세계가 연결되는 모든 지점을 찾습니다.
+            </p>
         </div>
-    </header>
+    </div>
+</section>
 
-    <main class="site-main">
-        <section id="about">
-            <video autoplay muted loop playsinline preload="auto" class="bg-video">
-                <source src="{{ '/bg-video.mp4' | relative_url }}" type="video/mp4">
-            </video>
-            <div class="video-overlay"></div>
+<section id="services" class="section">
+    <div class="site-shell">
+        <div class="section-inner">
+            <h2 class="section-title">Business Areas</h2>
+            <p class="section-desc">서낭이 개척하고 연결하는 비즈니스의 주요 영역입니다.</p>
 
-            <div class="hero-inner">
-                <h2 class="hero-headline serif">경계에서 새로운 가치를 창출합니다.</h2>
-
-                <div class="definition-box">
-                    <h1>서낭</h1><span class="pos">[명사]</span>
-                    <ol>
-                        <li>마을 어귀를 지키며 액운을 막는 토속신</li>
-                        <li>세계와 세계의 경계</li>
-                    </ol>
+            <div class="grid-container">
+                <div class="service-card">
+                    <h3 class="serif">관계 시장 개척</h3>
+                    <p>기존 매칭 서비스의 한계를 넘어, 글로벌 시장에서 진정성 있는 인간관계와 연결을 창출하는 플랫폼 및 오프라인 비즈니스를 기획합니다.</p>
                 </div>
 
-                <p class="hero-subtext serif">
-                    새로운 초월적 관계의 탄생, 세계와 세계가 연결되는 모든 지점을 찾습니다.
-                </p>
-            </div>
-        </section>
+                <div class="service-card">
+                    <h3 class="serif">경계 산업 연구</h3>
+                    <p>서로 다른 세계가 만나는 경계 지점에서 발생하는 문화, 기술, 상업의 변화를 탐구하고 새로운 사업 기회를 발굴합니다.</p>
+                </div>
 
-        <section id="services">
-            <div class="section-inner">
-                <h2 class="section-title">Business Areas</h2>
-                <p class="section-desc">서낭이 개척하고 연결하는 비즈니스의 주요 영역입니다.</p>
-
-                <div class="grid-container">
-                    <div class="service-card">
-                        <h3 class="serif">관계 시장 개척</h3>
-                        <p>기존 매칭 서비스의 한계를 넘어, 글로벌 시장에서 진정성 있는 인간관계와 연결을 창출하는 플랫폼 및 오프라인 비즈니스를 기획합니다.</p>
-                    </div>
-                    <div class="service-card">
-                        <h3 class="serif">M&A 및 재무 자문</h3>
-                        <p>중소·중견기업 및 스타트업의 생애주기 전반에 걸친 딜 클로징(Deal Closing)과 가치평가를 지원하며, 성공적인 투자 유치 전략을 수립합니다.</p>
-                    </div>
-                    <div class="service-card">
-                        <h3 class="serif">스타트업 전략 구조화</h3>
-                        <p>초기 자본 조달부터 린 스타트업(Lean Startup) 모델 기반의 비즈니스 고도화, IR 자료 재설계 등 CEO의 시각에서 핵심 과제를 해결합니다.</p>
-                    </div>
-                    <div class="service-card">
-                        <h3 class="serif">휴먼 인터랙션 서비스</h3>
-                        <p>어떠한 반응도 강요하지 않고 온전히 귀 기울여 듣는 텔레포닉 경청 서비스 등, 인간 본연의 고독을 해소하는 새로운 접점을 탐구합니다.</p>
-                    </div>
+                <div class="service-card">
+                    <h3 class="serif">브랜드 인큐베이팅</h3>
+                    <p>철학과 감각을 갖춘 브랜드를 기획하고, 고유한 정체성을 바탕으로 장기적인 자산으로 성장시키는 일을 합니다.</p>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
 
-        <section id="blog-preview">
-            <div class="section-inner">
-                <h2 class="section-title">Blog</h2>
-                <p class="section-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
+<section class="section">
+    <div class="site-shell">
+        <div class="section-inner">
+            <h2 class="section-title">Archive</h2>
+            <p class="section-desc">서낭의 생각과 기록, 진행 중인 실험들을 아카이브합니다.</p>
 
-                <div class="carousel-wrapper">
-                    <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
-                    <div class="carousel-track" id="carouselTrack">
-                        {% for post in site.posts %}
-                        <div class="carousel-card" onclick="location.href='{{ post.url | relative_url }}'">
-                            <div>
-                                <div class="card-date">{{ post.date | date: "%Y. %m. %d." }}</div>
-                                <h4 class="card-title serif">{{ post.title }}</h4>
-                            </div>
-                            <p class="card-excerpt">{{ post.excerpt | strip_html | truncatewords: 15 }}</p>
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
+
+                <div class="carousel-track" id="carouselTrack">
+                    {% for post in site.posts %}
+                    <div class="carousel-card" onclick="location.href='{{ post.url | relative_url }}'">
+                        <div>
+                            <div class="card-date">{{ post.date | date: "%Y. %m. %d." }}</div>
+                            <h4 class="card-title serif">{{ post.title }}</h4>
                         </div>
-                        {% endfor %}
-
-                        {% if site.posts.size == 0 %}
-                        <div class="carousel-card" onclick="location.href='{{ '/blog' | relative_url }}'">
-                            <div>
-                                <div class="card-date">2026. 03. 27.</div>
-                                <h4 class="card-title serif">첫 번째 블로그 기록</h4>
-                            </div>
-                            <p class="card-excerpt">아직 발행된 글이 없습니다. _posts 폴더에 마크다운(.md) 파일로 글을 작성하면 이곳에 카드가 자동으로 생성됩니다.</p>
-                        </div>
-                        {% endif %}
+                        <p class="card-excerpt">{{ post.excerpt | strip_html | truncatewords: 15 }}</p>
                     </div>
-                    <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
+                    {% endfor %}
+
+                    {% if site.posts.size == 0 %}
+                    <div class="carousel-card" onclick="location.href='{{ '/blog/' | relative_url }}'">
+                        <div>
+                            <div class="card-date">2026. 03. 27.</div>
+                            <h4 class="card-title serif">첫 번째 블로그 기록</h4>
+                        </div>
+                        <p class="card-excerpt">아직 발행된 글이 없습니다. _posts 폴더에 마크다운(.md) 파일로 글을 작성하면 이곳에 카드가 자동으로 생성됩니다.</p>
+                    </div>
+                    {% endif %}
                 </div>
+
+                <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
             </div>
-        </section>
-    </main>
+        </div>
+    </div>
+</section>
 
-    <footer class="site-footer">
-        <p>&copy; 2026 Seonang. All rights reserved.</p>
-    </footer>
-
-    <script>
-        function moveCarousel(direction) {
-            const track = document.getElementById('carouselTrack');
-            const card = track.querySelector('.carousel-card');
-            if (!card) return;
-            const cardWidth = card.offsetWidth;
-            const gap = 20;
-            track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
-        }
-    </script>
-</body>
-</html>
+<script>
+function moveCarousel(direction) {
+    const track = document.getElementById('carouselTrack');
+    const card = track.querySelector('.carousel-card');
+    if (!card) return;
+    const cardWidth = card.offsetWidth;
+    const gap = 20;
+    track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
+}
+</script>
