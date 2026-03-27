@@ -40,17 +40,22 @@ layout: null
             background: rgba(234, 226, 214, 0.82);
             backdrop-filter: blur(14px);
             z-index: 1000;
+            border-bottom: 1px solid rgba(70, 55, 38, 0.10);
+        }
+
+        .nav-inner {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 0 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(70, 55, 38, 0.10);
         }
 
         .nav-logo {
             display: flex;
             flex-direction: column;
             text-decoration: none;
-            margin-left: 5%;
         }
 
         .nav-logo .serif {
@@ -70,7 +75,8 @@ layout: null
         }
 
         .nav-links {
-            margin-right: 5%;
+            display: flex;
+            align-items: center;
         }
 
         .nav-links a {
@@ -235,14 +241,16 @@ layout: null
 <body>
 
     <nav>
-        <a href="{{ '/' | relative_url }}" class="nav-logo">
-            <span class="serif">서낭</span>
-            <span class="logo-eng">SEONANG</span>
-        </a>
-        <div class="nav-links">
-            <a href="{{ '/#about' | relative_url }}">About</a>
-            <a href="{{ '/#services' | relative_url }}">Services</a>
-            <a href="{{ '/blog' | relative_url }}">Blog</a>
+        <div class="nav-inner">
+            <a href="{{ '/' | relative_url }}" class="nav-logo">
+                <span class="serif">서낭</span>
+                <span class="logo-eng">SEONANG</span>
+            </a>
+            <div class="nav-links">
+                <a href="{{ '/#about' | relative_url }}">About</a>
+                <a href="{{ '/#services' | relative_url }}">Services</a>
+                <a href="{{ '/blog' | relative_url }}">Blog</a>
+            </div>
         </div>
     </nav>
 
