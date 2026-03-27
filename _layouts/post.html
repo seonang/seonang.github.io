@@ -2,23 +2,21 @@
 layout: default
 ---
 <section class="post-page">
-    <div class="site-shell">
-        <div class="post-wrap">
-            <header class="post-header">
-                <div class="post-date">{{ page.date | date: "%Y. %m. %d." }}</div>
-                <h1 class="post-title serif">{{ page.title }}</h1>
-                {% if page.description %}
-                <p class="post-subtitle">{{ page.description }}</p>
-                {% endif %}
-            </header>
+    <div class="post-wrap">
+        <header class="post-header">
+            <div class="post-date">{{ page.date | date: "%Y. %m. %d." }}</div>
+            <h1 class="post-title serif">{{ page.title }}</h1>
+            {% if page.description %}
+            <p class="post-subtitle">{{ page.description }}</p>
+            {% endif %}
+        </header>
 
-            <article class="post-content">
-                {{ content }}
-            </article>
+        <article class="post-content">
+            {{ content }}
+        </article>
 
-            <div class="post-bottom-nav">
-                <a class="back-to-blog" href="{{ '/blog/' | relative_url }}">← Blog로 돌아가기</a>
-            </div>
+        <div class="post-bottom-nav">
+            <a class="back-to-blog" href="{{ '/blog' | relative_url }}">← Blog로 돌아가기</a>
         </div>
     </div>
 </section>
