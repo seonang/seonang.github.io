@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if page.title %}{{ page.title }} - 서낭{% else %}서낭 - Seonang{% endif %}</title>
+    <title>{% if page.title %}{{ page.title }}{% else %}서낭 - Seonang{% endif %}</title>
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
 </head>
-<body>
+<body class="{% if page.layout == 'post' %}post-template{% endif %}">
     {% include site-header.html %}
 
     <main class="site-main">
@@ -15,8 +15,16 @@
 
     {% include site-footer.html %}
 
-    {% if page.custom_script %}
-    <script src="{{ page.custom_script | relative_url }}"></script>
-    {% endif %}
+    <script>
+    function moveCarousel(direction) {
+        const track = document.getElementById('carouselTrack');
+        if (!track) return;
+        const firstCard = track.querySelector('.carousel-card');
+        if (!firstCard) return;
+        const cardWidth = firstCard.getBoundingClientRect().width;
+        const gap = parseFloat(window.getComputedStyle(track).gap) || 20;
+        track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
+    }
+    </script>
 </body>
 </html>
