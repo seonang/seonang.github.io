@@ -259,7 +259,7 @@ layout: null
             font-weight: 300;
         }
 
-        #archive {
+        #blog-preview {
             background-color: rgba(221, 210, 195, 0.55);
             border-top: 1px solid rgba(70, 55, 38, 0.08);
             position: relative;
@@ -407,7 +407,7 @@ layout: null
         <div class="nav-links">
             <a href="#about">About</a>
             <a href="#services">Services</a>
-            <a href="#archive">Archive</a>
+            <a href="{{ '/blog' | relative_url }}">Blog</a>
         </div>
     </nav>
 
@@ -460,16 +460,16 @@ layout: null
         </div>
     </section>
 
-    <section id="archive">
+    <section id="blog-preview">
         <div class="section-inner">
-            <h2 class="section-title">Archive</h2>
+            <h2 class="section-title">Blog</h2>
             <p class="section-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
 
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
                 <div class="carousel-track" id="carouselTrack">
                     {% for post in site.posts %}
-                    <div class="carousel-card" onclick="location.href='{{ post.url }}'">
+                    <div class="carousel-card" onclick="location.href='{{ '/blog' | relative_url }}'">
                         <div>
                             <div class="card-date">{{ post.date | date: "%Y. %m. %d." }}</div>
                             <h4 class="card-title serif">{{ post.title }}</h4>
@@ -479,10 +479,10 @@ layout: null
                     {% endfor %}
 
                     {% if site.posts.size == 0 %}
-                    <div class="carousel-card">
+                    <div class="carousel-card" onclick="location.href='{{ '/blog' | relative_url }}'">
                         <div>
                             <div class="card-date">2026. 03. 27.</div>
-                            <h4 class="card-title serif">첫 번째 아카이브 기록</h4>
+                            <h4 class="card-title serif">첫 번째 블로그 기록</h4>
                         </div>
                         <p class="card-excerpt">아직 발행된 글이 없습니다. _posts 폴더에 마크다운(.md) 파일로 글을 작성하면 이곳에 카드가 자동으로 생성됩니다.</p>
                     </div>
