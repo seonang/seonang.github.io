@@ -8,9 +8,7 @@ permalink: /contact/
     <div class="section-inner contact-single">
         <p class="contact-kicker">CONTACT</p>
 
-        <h1 class="contact-title serif">
-            서낭과 연결되기.
-        </h1>
+        <h1 class="contact-title serif">서낭과 연결되기.</h1>
 
         <p class="contact-lead">
             문의를 남겨주세요. 확인 후 회신드리겠습니다.
@@ -39,3 +37,54 @@ permalink: /contact/
         </div>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('contact-form');
+    const statusEl = document.getElementById('form-status');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const payload = {
+            name: form.name.value.trim(),
+            contact: form.contact.value.trim(),
+            message: form.message.value.trim()
+        };
+
+        if (!payload.name || !payload.contact || !payload.message) {
+            statusEl.textContent = '모든 항목을 입력해 주세요.';
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '전송 중...';
+        statusEl.textContent = '';
+
+        try {
+            const response = await fetch('https://YOUR-WORKER-URL.workers.dev', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || '전송 중 오류가 발생했습니다.');
+            }
+
+            form.reset();
+            statusEl.textContent = '문의가 정상적으로 접수되었습니다.';
+        } catch (error) {
+            statusEl.textContent = error.message || '전송 중 오류가 발생했습니다.';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '문의 남기기';
+        }
+    });
+});
+</script>
