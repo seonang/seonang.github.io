@@ -30,21 +30,21 @@ title: 서낭 - Seonang
         <h2 class="section-title">Portfolio</h2>
         <p class="section-desc">서낭이 개척하고 연결해온 주요 포트폴리오입니다.</p>
 
-        <div class="grid-container">
-            <div class="service-card">
-                <h3 class="serif">관계 시장 개척</h3>
-                <p>기존 매칭 서비스의 한계를 넘어, 글로벌 시장에서 진정성 있는 인간관계와 연결을 창출하는 플랫폼 및 오프라인 비즈니스를 기획합니다.</p>
-            </div>
+        <div class="portfolio-grid">
+            {% for item in site.portfolio %}
+            <article class="portfolio-card" onclick="location.href='{{ item.url | relative_url }}'">
+                {% if item.thumbnail %}
+                <div class="portfolio-thumb">
+                    <img src="{{ item.thumbnail | relative_url }}" alt="{{ item.title }}">
+                </div>
+                {% endif %}
 
-            <div class="service-card">
-                <h3 class="serif">경계 산업 연구</h3>
-                <p>서로 다른 세계가 만나는 경계 지점에서 발생하는 문화, 기술, 상업의 변화를 탐구하고 새로운 사업 기회를 발굴합니다.</p>
-            </div>
-
-            <div class="service-card">
-                <h3 class="serif">브랜드 인큐베이팅</h3>
-                <p>철학과 감각을 갖춘 브랜드를 기획하고, 고유한 정체성을 바탕으로 장기적인 자산으로 성장시키는 일을 합니다.</p>
-            </div>
+                <div class="portfolio-body">
+                    <h3 class="serif">{{ item.title }}</h3>
+                    <p>{{ item.excerpt }}</p>
+                </div>
+            </article>
+            {% endfor %}
         </div>
     </div>
 </section>
