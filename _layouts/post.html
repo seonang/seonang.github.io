@@ -1,0 +1,104 @@
+---
+layout: null
+---
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} - 서낭(SEONANG)</title>
+    <style>
+        /* 웹 폰트 로드 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap');
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        /* 글로벌 디자인 유지 (메인과 동일한 배경 및 폰트) */
+        body, html {
+            margin: 0; padding: 0;
+            background-color: #080808;
+            background-image: 
+                radial-gradient(circle at 0% 30%, rgba(212, 175, 55, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 100% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 40%);
+            background-attachment: fixed;
+            color: #F5F5F5; font-family: 'Pretendard', sans-serif; line-height: 1.8;
+        }
+
+        h1, h2, h3, h4, h5, h6, .serif { font-family: 'Noto Serif KR', serif; font-weight: 600; }
+
+        /* 네비게이션 바 (메인 페이지로 돌아가는 절대 경로 '/' 추가) */
+        nav { position: fixed; top: 0; width: 100%; padding: 15px 0; background: rgba(10,10,10,0.85); backdrop-filter: blur(15px); z-index: 1000; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-logo { display: flex; flex-direction: column; text-decoration: none; margin-left: 5%; }
+        .nav-logo .serif { font-size: 1.4rem; color: #fff; letter-spacing: 2px; line-height: 1.1; }
+        .nav-logo .logo-eng { font-size: 0.65rem; color: #d4af37; font-family: 'Pretendard', sans-serif; letter-spacing: 3px; margin-top: 4px; font-weight: 300; }
+        
+        .nav-links { margin-right: 5%; }
+        .nav-links a { color: #aaaaaa; text-decoration: none; margin-left: 30px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; }
+        .nav-links a:hover { color: #ffffff; }
+
+        /* 포스트 컨테이너 (글래스모피즘 적용) */
+        .post-container {
+            max-width: 800px;
+            margin: 150px auto 100px; /* 네비게이션 바에 가려지지 않도록 상단 여백 확보 */
+            padding: 50px;
+            background: rgba(26, 26, 26, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+
+        /* 포스트 헤더 (제목 및 날짜) */
+        .post-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 30px; margin-bottom: 40px; text-align: center; }
+        .post-title { font-size: 2.5rem; color: #ffffff; margin-bottom: 15px; word-break: keep-all; }
+        .post-meta { color: #888888; font-size: 0.95rem; font-weight: 300; letter-spacing: 1px; font-family: 'Pretendard', sans-serif; }
+
+        /* 본문 마크다운 자동 스타일링 */
+        .post-content { font-size: 1.1rem; color: #dddddd; font-weight: 300; }
+        .post-content h2 { font-size: 1.8rem; color: #d4af37; margin-top: 50px; margin-bottom: 20px; } /* 중제목은 골드 포인트 */
+        .post-content h3 { font-size: 1.5rem; color: #ffffff; margin-top: 40px; margin-bottom: 15px; }
+        .post-content p { margin-bottom: 25px; word-break: keep-all; }
+        .post-content a { color: #d4af37; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.3s; }
+        .post-content a:hover { border-color: #d4af37; }
+        .post-content blockquote { border-left: 3px solid #d4af37; padding-left: 20px; margin-left: 0; color: #aaaaaa; font-style: italic; }
+        .post-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 30px 0; }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .post-container { margin: 120px 20px 50px; padding: 30px 20px; }
+            .post-title { font-size: 1.8rem; }
+        }
+
+        /* Footer */
+        footer { background-color: #050505; border-top: 1px solid #111; padding: 50px 5%; text-align: center; color: #555; font-size: 0.85rem; font-weight: 300; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="nav-logo">
+            <span class="serif">서낭</span>
+            <span class="logo-eng">SEONANG</span>
+        </a>
+        <div class="nav-links">
+            <a href="/#about">About</a>
+            <a href="/#services">Services</a>
+            <a href="/#archive">Archive</a>
+        </div>
+    </nav>
+
+    <main class="post-container">
+        <header class="post-header">
+            <h1 class="post-title serif">{{ page.title }}</h1>
+            <div class="post-meta">{{ page.date | date: "%Y년 %m월 %d일" }}</div>
+        </header>
+        
+        <article class="post-content">
+            {{ content }}
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Seonang. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
