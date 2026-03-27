@@ -1,6 +1,5 @@
 ---
 layout: null
-title: Blog
 permalink: /blog/
 ---
 <!DOCTYPE html>
@@ -13,123 +12,180 @@ permalink: /blog/
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap');
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-        html { scroll-behavior: smooth; }
+        :root {
+            --bg: #EAE2D6;
+            --bg-strong: #DDD2C3;
+            --text: #2F2923;
+            --text-strong: #2A241F;
+            --text-muted: #6D6257;
+            --accent: #9C7A42;
+            --border: rgba(70, 55, 38, 0.10);
+            --border-soft: rgba(70, 55, 38, 0.08);
+            --header-height: 96px;
+            --header-padding-y: 15px;
+            --page-gutter: 5%;
+            --content-width: 1050px;
+            --footer-padding-y: 50px;
+        }
 
-        body, html {
+        html {
+            scroll-behavior: smooth;
+        }
+
+        html, body {
             margin: 0;
             padding: 0;
-            background-color: #EAE2D6;
+            min-height: 100%;
+            background-color: var(--bg);
             background-image:
                 radial-gradient(circle at 0% 20%, rgba(156, 122, 66, 0.08) 0%, transparent 38%),
                 radial-gradient(circle at 100% 85%, rgba(120, 102, 76, 0.06) 0%, transparent 40%);
             background-attachment: fixed;
-            color: #2F2923;
+            color: var(--text);
             font-family: 'Pretendard', sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        h1, h2, h3, .serif {
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, .serif {
             font-family: 'Noto Serif KR', serif;
             font-weight: 600;
         }
 
-        nav {
+        .site-header {
             position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
-            padding: 15px 0;
+            padding: var(--header-padding-y) 0;
             background: rgba(234, 226, 214, 0.82);
             backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
             z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .site-header-inner {
+            max-width: calc(var(--content-width) + (var(--page-gutter) * 2));
+            margin: 0 auto;
+            padding: 0 var(--page-gutter);
+            box-sizing: border-box;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(70, 55, 38, 0.10);
         }
 
         .nav-logo {
             display: flex;
             flex-direction: column;
             text-decoration: none;
-            margin-left: 5%;
+            flex-shrink: 0;
         }
 
         .nav-logo .serif {
             font-size: 2.4rem;
-            color: #2A241F;
+            color: var(--text-strong);
             letter-spacing: 2px;
             line-height: 1.1;
         }
 
         .nav-logo .logo-eng {
             font-size: 1rem;
-            color: #9C7A42;
+            color: var(--accent);
             font-family: 'Pretendard', sans-serif;
             letter-spacing: 3px;
             margin-top: 4px;
             font-weight: 300;
+            line-height: 1.1;
         }
 
         .nav-links {
-            margin-right: 5.2%;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
-            color: #6D6257;
+            color: var(--text-muted);
             text-decoration: none;
             margin-left: 30px;
             font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: color 0.3s;
+            white-space: nowrap;
         }
 
-        .nav-links a:hover {
-            color: #2A241F;
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-strong);
         }
 
-        .page-wrap {
-            max-width: 1050px;
+        .site-main {
+            flex: 1;
+            display: block;
+        }
+
+        .blog-page {
+            padding: calc(var(--header-height) + 54px) var(--page-gutter) 100px;
+            box-sizing: border-box;
+        }
+
+        .page-inner {
+            max-width: var(--content-width);
             margin: 0 auto;
-            padding: 150px 5% 90px;
+            width: 100%;
         }
 
         .page-header {
-            margin-bottom: 56px;
+            margin-bottom: 52px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid var(--border);
         }
 
         .page-title {
-            font-size: 3rem;
             margin: 0 0 14px 0;
-            color: #2A241F;
+            font-size: 3rem;
+            line-height: 1.25;
+            color: var(--text-strong);
         }
 
         .page-desc {
-            color: #6D6257;
-            font-size: 1.05rem;
             margin: 0;
+            color: var(--text-muted);
+            font-size: 1.05rem;
             font-weight: 300;
         }
 
-        .post-list {
+        .post-grid {
             display: grid;
-            gap: 24px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 30px;
         }
 
-        .post-item {
-            display: block;
-            text-decoration: none;
-            color: inherit;
+        .post-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 240px;
+            padding: 34px 30px;
             background: rgba(255, 248, 240, 0.62);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(70, 55, 38, 0.10);
-            padding: 32px 30px;
-            transition: all 0.4s ease;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
             box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
+            transition: all 0.4s ease;
+            box-sizing: border-box;
         }
 
-        .post-item:hover {
+        .post-card:hover {
             transform: translateY(-4px);
             border-color: rgba(156, 122, 66, 0.35);
             background: rgba(255, 250, 244, 0.82);
@@ -138,52 +194,65 @@ permalink: /blog/
 
         .post-date {
             color: #7A6D61;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 14px;
             font-weight: 300;
         }
 
-        .post-title {
-            font-size: 1.6rem;
-            margin: 0 0 12px 0;
-            color: #2A241F;
+        .post-card-title {
+            margin: 0 0 16px 0;
+            font-size: 1.45rem;
             line-height: 1.4;
+            color: var(--text-strong);
+            word-break: keep-all;
         }
 
         .post-excerpt {
-            color: #6D6257;
-            font-size: 0.98rem;
-            line-height: 1.7;
             margin: 0;
+            color: var(--text-muted);
+            font-size: 0.96rem;
+            line-height: 1.7;
             font-weight: 300;
         }
 
-        footer {
-            background-color: #DDD2C3;
-            border-top: 1px solid rgba(70, 55, 38, 0.08);
-            padding: 50px 5%;
+        .empty-state {
+            padding: 44px 38px;
+            background: rgba(255, 248, 240, 0.62);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-weight: 300;
+            box-sizing: border-box;
+        }
+
+        .site-footer {
+            margin-top: auto;
+            background-color: var(--bg-strong);
+            border-top: 1px solid var(--border-soft);
+            padding: var(--footer-padding-y) var(--page-gutter);
             text-align: center;
-            color: #6D6257;
+            color: var(--text-muted);
             font-size: 0.85rem;
             font-weight: 300;
+            box-sizing: border-box;
+        }
+
+        .site-footer p {
+            margin: 0;
+        }
+
+        @media (max-width: 900px) {
+            .post-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
-            .page-wrap {
-                padding-top: 130px;
-                padding-bottom: 70px;
-            }
-
-            .page-title {
-                font-size: 2.2rem;
+            :root {
+                --header-height: 88px;
             }
 
             .nav-logo .serif {
                 font-size: 2rem;
-            }
-
-            .nav-links {
-                margin-right: 5%;
             }
 
             .nav-links a {
@@ -191,54 +260,63 @@ permalink: /blog/
                 font-size: 0.88rem;
             }
 
-            .post-item {
-                padding: 26px 22px;
+            .blog-page {
+                padding-top: calc(var(--header-height) + 40px);
+                padding-bottom: 80px;
+            }
+
+            .page-title {
+                font-size: 2.2rem;
             }
         }
     </style>
 </head>
 <body>
-
-    <nav>
-        <a href="{{ '/' | relative_url }}" class="nav-logo">
-            <span class="serif">서낭</span>
-            <span class="logo-eng">SEONANG</span>
-        </a>
-        <div class="nav-links">
-            <a href="{{ '/#about' | relative_url }}">About</a>
-            <a href="{{ '/#services' | relative_url }}">Services</a>
-            <a href="{{ '/blog' | relative_url }}">Blog</a>
-        </div>
-    </nav>
-
-    <main class="page-wrap">
-        <header class="page-header">
-            <h1 class="page-title serif">Blog</h1>
-            <p class="page-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
-        </header>
-
-        <section class="post-list">
-            {% for post in site.posts %}
-            <a class="post-item" href="{{ post.url | relative_url }}">
-                <div class="post-date">{{ post.date | date: "%Y. %m. %d." }}</div>
-                <h2 class="post-title serif">{{ post.title }}</h2>
-                <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="{{ '/' | relative_url }}" class="nav-logo">
+                <span class="serif">서낭</span>
+                <span class="logo-eng">SEONANG</span>
             </a>
-            {% endfor %}
+            <nav class="nav-links">
+                <a href="{{ '/#about' | relative_url }}">About</a>
+                <a href="{{ '/#services' | relative_url }}">Services</a>
+                <a href="{{ '/blog' | relative_url }}" class="active">Blog</a>
+            </nav>
+        </div>
+    </header>
 
-            {% if site.posts.size == 0 %}
-            <div class="post-item">
-                <div class="post-date">2026. 03. 27.</div>
-                <h2 class="post-title serif">아직 게시된 글이 없습니다.</h2>
-                <p class="post-excerpt">_posts 폴더에 글을 추가하면 이 페이지에 자동으로 표시됩니다.</p>
+    <main class="site-main">
+        <section class="blog-page">
+            <div class="page-inner">
+                <header class="page-header">
+                    <h1 class="page-title serif">Blog</h1>
+                    <p class="page-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
+                </header>
+
+                {% if site.posts.size > 0 %}
+                <div class="post-grid">
+                    {% for post in site.posts %}
+                    <a class="post-card" href="{{ post.url | relative_url }}">
+                        <div>
+                            <div class="post-date">{{ post.date | date: "%Y. %m. %d." }}</div>
+                            <h2 class="post-card-title serif">{{ post.title }}</h2>
+                        </div>
+                        <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 28 }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    아직 발행된 글이 없습니다. <code>_posts</code> 폴더에 마크다운(.md) 파일을 추가하면 이 페이지에 자동으로 표시됩니다.
+                </div>
+                {% endif %}
             </div>
-            {% endif %}
         </section>
     </main>
 
-    <footer>
+    <footer class="site-footer">
         <p>&copy; 2026 Seonang. All rights reserved.</p>
     </footer>
-
 </body>
 </html>
