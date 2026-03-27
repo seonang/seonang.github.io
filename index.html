@@ -1,102 +1,85 @@
 ---
 layout: default
+title: 서낭 - Seonang
 ---
-
 <section id="about">
     <video autoplay muted loop playsinline preload="auto" class="bg-video">
         <source src="{{ '/bg-video.mp4' | relative_url }}" type="video/mp4">
     </video>
     <div class="video-overlay"></div>
 
-    <div class="site-shell">
-        <div class="hero-inner">
-            <h2 class="hero-headline serif">경계에서 새로운 가치를 창출합니다.</h2>
+    <div class="hero-inner">
+        <h2 class="hero-headline serif">경계에서 새로운 가치를 창출합니다.</h2>
 
-            <div class="definition-box">
-                <h1>서낭</h1><span class="pos">[명사]</span>
-                <ol>
-                    <li>마을 어귀를 지키며 액운을 막는 토속신</li>
-                    <li>세계와 세계의 경계</li>
-                </ol>
-            </div>
-
-            <p class="hero-subtext serif">
-                새로운 초월적 관계의 탄생, 세계와 세계가 연결되는 모든 지점을 찾습니다.
-            </p>
+        <div class="definition-box">
+            <h1>서낭</h1><span class="pos">[명사]</span>
+            <ol>
+                <li>마을 어귀를 지키며 액운을 막는 토속신</li>
+                <li>세계와 세계의 경계</li>
+            </ol>
         </div>
+
+        <p class="hero-subtext serif">
+            새로운 초월적 관계의 탄생, 세계와 세계가 연결되는 모든 지점을 찾습니다.
+        </p>
     </div>
 </section>
 
-<section id="services" class="section">
-    <div class="site-shell">
-        <div class="section-inner">
-            <h2 class="section-title">Business Areas</h2>
-            <p class="section-desc">서낭이 개척하고 연결하는 비즈니스의 주요 영역입니다.</p>
+<section id="services">
+    <div class="section-inner">
+        <h2 class="section-title">Business Areas</h2>
+        <p class="section-desc">서낭이 개척하고 연결하는 비즈니스의 주요 영역입니다.</p>
 
-            <div class="grid-container">
-                <div class="service-card">
-                    <h3 class="serif">관계 시장 개척</h3>
-                    <p>기존 매칭 서비스의 한계를 넘어, 글로벌 시장에서 진정성 있는 인간관계와 연결을 창출하는 플랫폼 및 오프라인 비즈니스를 기획합니다.</p>
-                </div>
+        <div class="grid-container">
+            <div class="service-card">
+                <h3 class="serif">관계 시장 개척</h3>
+                <p>기존 매칭 서비스의 한계를 넘어, 글로벌 시장에서 진정성 있는 인간관계와 연결을 창출하는 플랫폼 및 오프라인 비즈니스를 기획합니다.</p>
+            </div>
 
-                <div class="service-card">
-                    <h3 class="serif">경계 산업 연구</h3>
-                    <p>서로 다른 세계가 만나는 경계 지점에서 발생하는 문화, 기술, 상업의 변화를 탐구하고 새로운 사업 기회를 발굴합니다.</p>
-                </div>
+            <div class="service-card">
+                <h3 class="serif">경계 산업 연구</h3>
+                <p>서로 다른 세계가 만나는 경계 지점에서 발생하는 문화, 기술, 상업의 변화를 탐구하고 새로운 사업 기회를 발굴합니다.</p>
+            </div>
 
-                <div class="service-card">
-                    <h3 class="serif">브랜드 인큐베이팅</h3>
-                    <p>철학과 감각을 갖춘 브랜드를 기획하고, 고유한 정체성을 바탕으로 장기적인 자산으로 성장시키는 일을 합니다.</p>
-                </div>
+            <div class="service-card">
+                <h3 class="serif">브랜드 인큐베이팅</h3>
+                <p>철학과 감각을 갖춘 브랜드를 기획하고, 고유한 정체성을 바탕으로 장기적인 자산으로 성장시키는 일을 합니다.</p>
             </div>
         </div>
     </div>
 </section>
 
-<section class="section">
-    <div class="site-shell">
-        <div class="section-inner">
-            <h2 class="section-title">Archive</h2>
-            <p class="section-desc">서낭의 생각과 기록, 진행 중인 실험들을 아카이브합니다.</p>
+<section id="archive">
+    <div class="section-inner">
+        <h2 class="section-title">Archive</h2>
+        <p class="section-desc">서낭의 생각과 기록, 진행 중인 실험들을 아카이브합니다.</p>
 
-            <div class="carousel-wrapper">
-                <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
+        <div class="carousel-wrapper">
+            <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
 
-                <div class="carousel-track" id="carouselTrack">
-                    {% for post in site.posts %}
-                    <div class="carousel-card" onclick="location.href='{{ post.url | relative_url }}'">
-                        <div>
-                            <div class="card-date">{{ post.date | date: "%Y. %m. %d." }}</div>
-                            <h4 class="card-title serif">{{ post.title }}</h4>
-                        </div>
-                        <p class="card-excerpt">{{ post.excerpt | strip_html | truncatewords: 15 }}</p>
+            <div class="carousel-track" id="carouselTrack">
+                {% for post in site.posts %}
+                <div class="carousel-card" onclick="location.href='{{ post.url | relative_url }}'">
+                    <div>
+                        <div class="card-date">{{ post.date | date: "%Y. %m. %d." }}</div>
+                        <h4 class="card-title serif">{{ post.title }}</h4>
                     </div>
-                    {% endfor %}
-
-                    {% if site.posts.size == 0 %}
-                    <div class="carousel-card" onclick="location.href='{{ '/blog/' | relative_url }}'">
-                        <div>
-                            <div class="card-date">2026. 03. 27.</div>
-                            <h4 class="card-title serif">첫 번째 블로그 기록</h4>
-                        </div>
-                        <p class="card-excerpt">아직 발행된 글이 없습니다. _posts 폴더에 마크다운(.md) 파일로 글을 작성하면 이곳에 카드가 자동으로 생성됩니다.</p>
-                    </div>
-                    {% endif %}
+                    <p class="card-excerpt">{{ post.excerpt | strip_html | truncatewords: 15 }}</p>
                 </div>
+                {% endfor %}
 
-                <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
+                {% if site.posts.size == 0 %}
+                <div class="carousel-card" onclick="location.href='{{ '/blog' | relative_url }}'">
+                    <div>
+                        <div class="card-date">준비 중</div>
+                        <h4 class="card-title serif">아카이브가 곧 채워집니다</h4>
+                    </div>
+                    <p class="card-excerpt">아직 게시된 글이 없습니다. 첫 글이 등록되면 이곳에 자동으로 표시됩니다.</p>
+                </div>
+                {% endif %}
             </div>
+
+            <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
         </div>
     </div>
 </section>
-
-<script>
-function moveCarousel(direction) {
-    const track = document.getElementById('carouselTrack');
-    const card = track.querySelector('.carousel-card');
-    if (!card) return;
-    const cardWidth = card.offsetWidth;
-    const gap = 20;
-    track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
-}
-</script>
