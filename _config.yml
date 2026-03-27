@@ -3,3 +3,7 @@ description: "세계와 세계의 연결, 경계"
 url: "https://seonang.kr"
 baseurl: ""
 permalink: /blog/:year/:month/:day/:title/
+collections:
+  portfolio:
+    output: true
+    permalink: /portfolio/:name/
