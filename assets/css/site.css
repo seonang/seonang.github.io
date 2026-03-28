@@ -703,14 +703,14 @@ body.post-template .post-date {
     border-top: 1px solid var(--border);
 }
 
-.back-to-blog {
+.back-to {
     display: inline-block;
     color: var(--text-muted);
     text-decoration: none;
     font-size: 0.95rem;
 }
 
-.back-to-blog:hover {
+.back-to:hover {
     color: var(--text-strong);
 }
 
