@@ -158,6 +158,14 @@ section {
     color: var(--text-strong);
 }
 
+.section-title-link,
+.section-title-link:visited,
+.section-title-link:hover,
+.section-title-link:active {
+  color: #2A241F;
+  text-decoration: none;
+}
+
 .section-desc {
     color: var(--text-muted);
     font-size: 1.05rem;
