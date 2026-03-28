@@ -714,6 +714,10 @@ body.post-template .post-date {
     color: var(--text-strong);
 }
 
+.back-home-wrap {
+  margin-top: 72px;
+}
+
 /* Contact */
 .contact-page {
     padding: calc(var(--header-height) + 54px) var(--page-gutter) 100px;
