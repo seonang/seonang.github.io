@@ -774,7 +774,7 @@ body.post-template .post-date {
 
 .contact-form-wrap {
     width: 90%;
-    background: rgba(255, 248, 240, 0.62);
+    background: #f2ede4;
     backdrop-filter: blur(10px);
     border: 1px solid var(--border);
     box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
