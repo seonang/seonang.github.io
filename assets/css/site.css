@@ -904,7 +904,7 @@ body.post-template .post-date {
 @media (max-width: 768px) {
     :root {
         --header-height: 76px;
-        --header-padding-y: 10px;
+        --header-padding-y: 12px;
         --page-gutter: 20px;
         --footer-padding-y: 32px;
     }
@@ -918,7 +918,7 @@ body.post-template .post-date {
     }
 
     .site-header-inner {
-        align-items: flex-start;
+        align-items: center;
     }
 
     .nav-logo .serif {
@@ -933,7 +933,7 @@ body.post-template .post-date {
     }
 
     .nav-links {
-        gap: 0;
+        align-items: center;
     }
 
     .nav-links a {
