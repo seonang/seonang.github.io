@@ -198,11 +198,11 @@ section {
     padding-top: calc(var(--header-height) + 40px);
 }
 #portfolio {
-    background-color: #F8F4EF;
+    background-color: #EEE7DC;
 }
 
 #blog {
-    background-color: #FAF8F5;
+    background-color: #EAE2D6;
 }
 
 .bg-video {
