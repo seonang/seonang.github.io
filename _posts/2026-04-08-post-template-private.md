@@ -5,7 +5,7 @@ description: "포스트 작성용 기본 템플릿과 이미지 삽입 가이드
 date: 2026-04-08 22:00:00 +0900
 archive_category: diary
 tags: [템플릿, 작성가이드]
-placeholder: true
+placeholder: false
 ---
 
 이 파일은 **작성용 템플릿**입니다.
