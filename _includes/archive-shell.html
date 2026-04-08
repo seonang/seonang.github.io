@@ -9,16 +9,8 @@
 {% assign all_tags = tag_pool | split: '|' | uniq | sort %}
 
 <section class="archive-page reference-style" data-archive-root data-default-category="{{ page.category_filter | default: 'all' }}" data-search-page="{% if page.search_page %}true{% else %}false{% endif %}">
-  <div class="archive-page-head">
-    <div class="archive-page-title-wrap">
-      <h1 class="archive-page-title">{{ page.archive_title | default: '서낭' }}</h1>
-    </div>
-    <form class="top-search" action="{{ '/search/' | relative_url }}" method="get">
-      <input type="text" name="q" value="{{ page.search_query | default: '' }}" placeholder="Search..." data-archive-search>
-    </form>
-  </div>
-
   <div class="archive-layout">
+
     <div class="archive-main">
       <p class="archive-total">{{ page.count_label | default: '전체보기' }} <strong data-archive-count>{{ all_items | size }}</strong></p>
 
