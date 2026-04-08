@@ -1,0 +1,93 @@
+From d9bb82ea43a05f50ab51553dcc054e63f5fc49fe Mon Sep 17 00:00:00 2001
+From: seonang <ceo@seonang.kr>
+Date: Wed, 8 Apr 2026 15:27:33 +0000
+Subject: [PATCH] Tighten title row and remove intro line
+
+---
+ _includes/archive-shell.html |  1 -
+ assets/css/site.css          | 32 ++++++++++++++++++--------------
+ 2 files changed, 18 insertions(+), 15 deletions(-)
+
+diff --git a/_includes/archive-shell.html b/_includes/archive-shell.html
+index 82e937e..7352d67 100644
+--- a/_includes/archive-shell.html
++++ b/_includes/archive-shell.html
+@@ -12,7 +12,6 @@
+   <div class="archive-page-head">
+     <div class="archive-page-title-wrap">
+       <h1 class="archive-page-title">{{ page.archive_title | default: '서낭' }}</h1>
+-      <p class="archive-page-subtitle">{{ page.archive_subtitle | default: '존재, 일상, 경영, 철학, 영화, 책을 기록하는 블로그.' }}</p>
+     </div>
+     <form class="top-search" action="{{ '/search/' | relative_url }}" method="get">
+       <input type="text" name="q" value="{{ page.search_query | default: '' }}" placeholder="Search..." data-archive-search>
+diff --git a/assets/css/site.css b/assets/css/site.css
+index 1e9d981..428be44 100644
+--- a/assets/css/site.css
++++ b/assets/css/site.css
+@@ -62,13 +62,17 @@ img { max-width: 100%; display: block; }
+ 
+ .archive-page-head {
+   display: grid;
+-  grid-template-columns: minmax(0, 1fr) 280px;
+-  gap: 40px;
+-  align-items: end;
+-  padding: 6px 0 26px;
++  grid-template-columns: minmax(0, 1fr) 220px;
++  gap: 20px;
++  align-items: center;
++  padding: 2px 0 22px;
+   border-bottom: 1px solid var(--line);
+ }
+-.archive-page-title-wrap { min-width: 0; }
++.archive-page-title-wrap {
++  min-width: 0;
++  display: flex;
++  align-items: center;
++}
+ .archive-page-title {
+   margin: 0;
+   font-size: 2.45rem;
+@@ -76,23 +80,20 @@ img { max-width: 100%; display: block; }
+   letter-spacing: -0.055em;
+   font-weight: 600;
+ }
+-.archive-page-subtitle {
+-  margin: 12px 0 0;
+-  color: #555;
+-  font-size: 0.98rem;
+-}
+ .top-search {
+   display: flex;
+   align-items: center;
++  justify-self: end;
++  width: 220px;
+ }
+ .top-search input {
+   width: 100%;
+-  height: 46px;
+-  padding: 0 16px;
++  height: 40px;
++  padding: 0 14px;
+   border: 1px solid var(--line-strong);
+   background: #fff;
+   outline: none;
+-  font-size: 0.96rem;
++  font-size: 0.92rem;
+ }
+ .top-search input::placeholder { color: #a0a0a0; }
+ .top-search input:focus,
+@@ -422,7 +423,10 @@ img { max-width: 100%; display: block; }
+     grid-template-columns: 1fr;
+     gap: 24px;
+   }
+-  .top-search { width: 100%; }
++  .top-search {
++    width: 100%;
++    justify-self: stretch;
++  }
+ }
+ 
+ @media (max-width: 760px) {
+-- 
+2.39.5
+
