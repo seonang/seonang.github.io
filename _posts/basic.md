@@ -9,3 +9,9 @@ placeholder: true
 ---
 
 본문
+
+diary, management, philosophy, book, movie
+
+
+![이미지 설명](/assets/images/posts/2026-04-08-organization-speed/cover.jpg)
+
