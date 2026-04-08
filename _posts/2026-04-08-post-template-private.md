@@ -171,12 +171,12 @@ assets/images/posts/2026-04-08-organization-speed/01.jpg
 assets/images/posts/2026-04-08-organization-speed/02.jpg
 Markdown에서는 이렇게 넣습니다.
 
-![이미지 설명](/assets/images/posts/2026-04-08-organization-speed/cover.jpg)
+\![이미지 설명](/assets/images/posts/2026-04-08-organization-speed/cover.jpg)
 문단 사이 예시:
 
 앞 문단입니다.
 
-![조직 구조 메모](/assets/images/posts/2026-04-08-organization-speed/01.jpg)
+\![조직 구조 메모](/assets/images/posts/2026-04-08-organization-speed/01.jpg)
 
 다음 문단입니다.
 이미지 작성 팁:
