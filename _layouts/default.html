@@ -1,30 +1,76 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if page.title %}{{ page.title }}{% else %}서낭 - Seonang{% endif %}</title>
-    <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  <meta name="theme-color" content="#0f2747">
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
 </head>
-<body class="{% if page.layout == 'post' %}post-template{% endif %}">
-    {% include site-header.html %}
+<body class="page-{{ page.section | default: page.layout | default: 'default' }}">
+  {% include site-header.html %}
 
-    <main class="site-main">
-        {{ content }}
-    </main>
+  <main class="site-main">
+    {{ content }}
+  </main>
 
-    {% include site-footer.html %}
+  {% include site-footer.html %}
 
-    <script>
-    function moveCarousel(direction) {
-        const track = document.getElementById('carouselTrack');
-        if (!track) return;
-        const firstCard = track.querySelector('.carousel-card');
-        if (!firstCard) return;
-        const cardWidth = firstCard.getBoundingClientRect().width;
-        const gap = parseFloat(window.getComputedStyle(track).gap) || 20;
-        track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
-    }
-    </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('[data-archive-root]').forEach(function (root) {
+        const searchInput = root.querySelector('[data-archive-search]');
+        const countNode = root.querySelector('[data-archive-count]');
+        const emptyNode = root.querySelector('[data-archive-empty]');
+        const cards = Array.from(root.querySelectorAll('[data-archive-card]'));
+        const tagButtons = Array.from(root.querySelectorAll('[data-tag-filter]'));
+
+        if (!cards.length) return;
+
+        let activeTag = 'all';
+
+        function normalize(value) {
+          return (value || '').toString().toLowerCase().trim();
+        }
+
+        function applyFilter() {
+          const keyword = normalize(searchInput ? searchInput.value : '');
+          let visibleCount = 0;
+
+          cards.forEach(function (card) {
+            const haystack = normalize(card.dataset.search);
+            const tags = normalize(card.dataset.tags).split('|').filter(Boolean);
+
+            const matchKeyword = !keyword || haystack.indexOf(keyword) !== -1;
+            const matchTag = activeTag === 'all' || tags.includes(activeTag);
+            const visible = matchKeyword && matchTag;
+
+            card.classList.toggle('is-hidden', !visible);
+            if (visible) visibleCount += 1;
+          });
+
+          if (countNode) countNode.textContent = visibleCount;
+          if (emptyNode) emptyNode.hidden = visibleCount !== 0;
+        }
+
+        tagButtons.forEach(function (button) {
+          button.addEventListener('click', function () {
+            activeTag = button.dataset.tagFilter || 'all';
+            tagButtons.forEach(function (node) {
+              node.classList.toggle('is-active', node === button);
+            });
+            applyFilter();
+          });
+        });
+
+        if (searchInput) {
+          searchInput.addEventListener('input', applyFilter);
+        }
+
+        applyFilter();
+      });
+    });
+  </script>
 </body>
 </html>

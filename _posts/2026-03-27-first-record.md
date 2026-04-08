@@ -3,6 +3,7 @@ layout: post
 title: "서낭의 시작"
 description: "첫 번째 기록"
 date: 2026-03-27 13:00:00 +0900
+placeholder: true
 ---
 
 서낭(SEONANG)은 마을 어귀를 지키며 액운을 막는 토속신이자, 세계와 세계가 맞닿아 연결되는 접점을 의미합니다. 

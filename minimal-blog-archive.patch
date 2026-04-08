@@ -1,0 +1,2829 @@
+From edd444386d85a7cf8173712447d15dd5f412ca11 Mon Sep 17 00:00:00 2001
+From: seonang <ceo@seonang.kr>
+Date: Wed, 8 Apr 2026 14:14:47 +0000
+Subject: [PATCH] Redesign site as minimal blog archive
+
+---
+ README.md                         |   66 ++
+ _books/.gitkeep                   |    1 +
+ _config.yml                       |   39 +-
+ _includes/site-footer.html        |    5 +-
+ _includes/site-header.html        |   25 +-
+ _layouts/default.html             |   94 +-
+ _layouts/entry.html               |   38 +
+ _layouts/post.html                |   22 +-
+ _movies/.gitkeep                  |    1 +
+ _posts/2026-03-27-first-record.md |    1 +
+ assets/css/site.css               | 1505 ++++++++++-------------------
+ blog.html                         |   88 +-
+ books.html                        |   77 ++
+ contact.html                      |   95 +-
+ index.html                        |  272 +++---
+ movies.html                       |   77 ++
+ portfolio.html                    |   46 +-
+ 17 files changed, 1108 insertions(+), 1344 deletions(-)
+ create mode 100644 README.md
+ create mode 100644 _books/.gitkeep
+ create mode 100644 _layouts/entry.html
+ create mode 100644 _movies/.gitkeep
+ create mode 100644 books.html
+ create mode 100644 movies.html
+
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..50f20da
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,66 @@
++# seonang.github.io
++
++미니멀 블로그 구조 메모.
++
++## 구조
++- 홈: `index.html`
++- 글 모음: `blog.html` + `_posts/`
++- 책: `books.html` + `_books/`
++- 영화: `movies.html` + `_movies/`
++- 공통 단일 글 레이아웃: `_layouts/entry.html`
++- 공통 스타일: `assets/css/site.css`
++
++## 작성 방식
++각 문서는 Markdown으로 추가하고, `tags`를 달면 아카이브 측면 패널에서 태그 필터가 자동으로 생성됩니다.
++
++### 글 모음 예시
++```md
++---
++title: "제목"
++description: "짧은 소개"
++date: 2026-04-08 22:00:00 +0900
++tags: [존재, 비즈니스, 일상관찰]
++---
++
++본문을 씁니다.
++```
++
++파일 경로 예시:
++- `_posts/2026-04-08-my-post.md`
++
++### 책 예시
++```md
++---
++title: "린스타트업"
++description: "왜 다시 읽을 가치가 있었는지"
++author: "에릭 리스"
++date: 2026-04-08
++tags: [스타트업, 제품, 전략]
++---
++
++책에 대한 감상과 메모를 씁니다.
++```
++
++파일 경로 예시:
++- `_books/lean-startup.md`
++
++### 영화 예시
++```md
++---
++title: "영화 제목"
++description: "짧은 감상"
++director: "감독 이름"
++release_year: "2024"
++date: 2026-04-08
++tags: [고독, 장면, 대사]
++---
++
++영화에 대한 기록을 씁니다.
++```
++
++파일 경로 예시:
++- `_movies/movie-title.md`
++
++## 주의
++- 기존 템플릿용 임시 글은 `placeholder: true`로 제외할 수 있습니다.
++- 검색은 제목/설명/태그를 기준으로 동작합니다.
+diff --git a/_books/.gitkeep b/_books/.gitkeep
+new file mode 100644
+index 0000000..b3a4252
+--- /dev/null
++++ b/_books/.gitkeep
+@@ -0,0 +1 @@
++placeholder
+\ No newline at end of file
+diff --git a/_config.yml b/_config.yml
+index d71e973..f32d4be 100644
+--- a/_config.yml
++++ b/_config.yml
+@@ -1,9 +1,42 @@
+ title: "서낭"
+-description: "세계와 세계의 연결, 경계"
++description: "서낭의 글과 감상을 담는 공간"
+ url: "https://seonang.kr"
+ baseurl: ""
++timezone: "Asia/Seoul"
++lang: "ko"
++markdown: kramdown
+ permalink: /blog/:year/:month/:day/:title/
++
+ collections:
+-  portfolio:
++  books:
+     output: true
+-    permalink: /portfolio/:name/
++    permalink: /books/:name/
++  movies:
++    output: true
++    permalink: /movies/:name/
++
++defaults:
++  - scope:
++      path: ""
++      type: "posts"
++    values:
++      layout: entry
++      section: blog
++      section_label: "글 모음"
++      section_url: "/blog/"
++  - scope:
++      path: ""
++      type: "books"
++    values:
++      layout: entry
++      section: books
++      section_label: "책"
++      section_url: "/books/"
++  - scope:
++      path: ""
++      type: "movies"
++    values:
++      layout: entry
++      section: movies
++      section_label: "영화"
++      section_url: "/movies/"
+diff --git a/_includes/site-footer.html b/_includes/site-footer.html
+index 0602e9a..1a23fb3 100644
+--- a/_includes/site-footer.html
++++ b/_includes/site-footer.html
+@@ -1,3 +1,6 @@
+ <footer class="site-footer">
+-    <p>&copy; 2026 Seonang. All rights reserved.</p>
++  <div class="site-footer-inner">
++    <p>서낭의 기록 보관소.</p>
++    <p class="site-footer-muted">글, 책, 영화에 대한 메모를 천천히 쌓아갑니다.</p>
++  </div>
+ </footer>
+diff --git a/_includes/site-header.html b/_includes/site-header.html
+index cd7ba0e..65c320c 100644
+--- a/_includes/site-header.html
++++ b/_includes/site-header.html
+@@ -1,14 +1,15 @@
+ <header class="site-header">
+-    <div class="site-header-inner">
+-        <a href="{{ '/' | relative_url }}" class="nav-logo">
+-            <span class="serif">서낭</span>
+-            <span class="logo-eng">SEONANG</span>
+-        </a>
+-        <nav class="nav-links">
+-            <a href="{{ '/#about' | relative_url }}" class="{% if page.url == '/' or page.url == '/index.html' %}active{% endif %}">About</a>
+-            <a href="{{ '/#portfolio' | relative_url }}" class="{% if page.url == '/' or page.url == '/index.html' %}active{% endif %}">Portfolio</a>
+-            <a href="{{ '/#blog' | relative_url }}" class="{% if page.url == '/' or page.url == '/index.html' or page.layout == 'post' %}active{% endif %}">Blog</a>
+-            <a href="{{ '/contact' | relative_url }}" class="{% if page.url == '/contact/' or page.url == '/contact' %}active{% endif %}">Contact</a>
+-        </nav>
+-    </div>
++  <div class="site-header-inner">
++    <a href="{{ '/' | relative_url }}" class="site-brand">
++      <span class="site-brand-ko">서낭</span>
++      <span class="site-brand-en">SEONANG</span>
++    </a>
++
++    <nav class="site-nav" aria-label="주요 메뉴">
++      <a href="{{ '/' | relative_url }}" class="{% if page.section == 'home' %}is-active{% endif %}">홈</a>
++      <a href="{{ '/blog/' | relative_url }}" class="{% if page.section == 'blog' %}is-active{% endif %}">글 모음</a>
++      <a href="{{ '/books/' | relative_url }}" class="{% if page.section == 'books' %}is-active{% endif %}">책</a>
++      <a href="{{ '/movies/' | relative_url }}" class="{% if page.section == 'movies' %}is-active{% endif %}">영화</a>
++    </nav>
++  </div>
+ </header>
+diff --git a/_layouts/default.html b/_layouts/default.html
+index 30af462..8c19d31 100644
+--- a/_layouts/default.html
++++ b/_layouts/default.html
+@@ -1,30 +1,76 @@
+ <!DOCTYPE html>
+ <html lang="ko">
+ <head>
+-    <meta charset="UTF-8">
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-    <title>{% if page.title %}{{ page.title }}{% else %}서낭 - Seonang{% endif %}</title>
+-    <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
++  <meta charset="UTF-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1.0">
++  <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
++  <meta name="description" content="{{ page.description | default: site.description }}">
++  <meta name="theme-color" content="#0f2747">
++  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+ </head>
+-<body class="{% if page.layout == 'post' %}post-template{% endif %}">
+-    {% include site-header.html %}
+-
+-    <main class="site-main">
+-        {{ content }}
+-    </main>
+-
+-    {% include site-footer.html %}
+-
+-    <script>
+-    function moveCarousel(direction) {
+-        const track = document.getElementById('carouselTrack');
+-        if (!track) return;
+-        const firstCard = track.querySelector('.carousel-card');
+-        if (!firstCard) return;
+-        const cardWidth = firstCard.getBoundingClientRect().width;
+-        const gap = parseFloat(window.getComputedStyle(track).gap) || 20;
+-        track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
+-    }
+-    </script>
++<body class="page-{{ page.section | default: page.layout | default: 'default' }}">
++  {% include site-header.html %}
++
++  <main class="site-main">
++    {{ content }}
++  </main>
++
++  {% include site-footer.html %}
++
++  <script>
++    document.addEventListener('DOMContentLoaded', function () {
++      document.querySelectorAll('[data-archive-root]').forEach(function (root) {
++        const searchInput = root.querySelector('[data-archive-search]');
++        const countNode = root.querySelector('[data-archive-count]');
++        const emptyNode = root.querySelector('[data-archive-empty]');
++        const cards = Array.from(root.querySelectorAll('[data-archive-card]'));
++        const tagButtons = Array.from(root.querySelectorAll('[data-tag-filter]'));
++
++        if (!cards.length) return;
++
++        let activeTag = 'all';
++
++        function normalize(value) {
++          return (value || '').toString().toLowerCase().trim();
++        }
++
++        function applyFilter() {
++          const keyword = normalize(searchInput ? searchInput.value : '');
++          let visibleCount = 0;
++
++          cards.forEach(function (card) {
++            const haystack = normalize(card.dataset.search);
++            const tags = normalize(card.dataset.tags).split('|').filter(Boolean);
++
++            const matchKeyword = !keyword || haystack.indexOf(keyword) !== -1;
++            const matchTag = activeTag === 'all' || tags.includes(activeTag);
++            const visible = matchKeyword && matchTag;
++
++            card.classList.toggle('is-hidden', !visible);
++            if (visible) visibleCount += 1;
++          });
++
++          if (countNode) countNode.textContent = visibleCount;
++          if (emptyNode) emptyNode.hidden = visibleCount !== 0;
++        }
++
++        tagButtons.forEach(function (button) {
++          button.addEventListener('click', function () {
++            activeTag = button.dataset.tagFilter || 'all';
++            tagButtons.forEach(function (node) {
++              node.classList.toggle('is-active', node === button);
++            });
++            applyFilter();
++          });
++        });
++
++        if (searchInput) {
++          searchInput.addEventListener('input', applyFilter);
++        }
++
++        applyFilter();
++      });
++    });
++  </script>
+ </body>
+ </html>
+diff --git a/_layouts/entry.html b/_layouts/entry.html
+new file mode 100644
+index 0000000..ec1e37d
+--- /dev/null
++++ b/_layouts/entry.html
+@@ -0,0 +1,38 @@
++---
++layout: default
++---
++<section class="entry-page">
++  <div class="entry-wrap">
++    <a class="entry-back" href="{{ page.section_url | relative_url }}">← {{ page.section_label }}</a>
++
++    <header class="entry-header">
++      <p class="eyebrow">{{ page.section_label }}</p>
++      <h1 class="entry-title">{{ page.title }}</h1>
++      {% if page.description %}
++        <p class="entry-description">{{ page.description }}</p>
++      {% endif %}
++
++      <div class="entry-meta">
++        {% if page.date %}<span>{{ page.date | date: "%Y.%m.%d" }}</span>{% endif %}
++        {% if page.author %}<span>저자 {{ page.author }}</span>{% endif %}
++        {% if page.translator %}<span>옮긴이 {{ page.translator }}</span>{% endif %}
++        {% if page.publisher %}<span>{{ page.publisher }}</span>{% endif %}
++        {% if page.director %}<span>감독 {{ page.director }}</span>{% endif %}
++        {% if page.release_year %}<span>{{ page.release_year }}</span>{% endif %}
++        {% if page.rating %}<span>{{ page.rating }}</span>{% endif %}
++      </div>
++
++      {% if page.tags and page.tags.size > 0 %}
++        <div class="tag-list">
++          {% for tag in page.tags %}
++            <span class="tag-chip">#{{ tag }}</span>
++          {% endfor %}
++        </div>
++      {% endif %}
++    </header>
++
++    <article class="entry-content prose">
++      {{ content }}
++    </article>
++  </div>
++</section>
+diff --git a/_layouts/post.html b/_layouts/post.html
+index 88d1ea8..1d1a20a 100644
+--- a/_layouts/post.html
++++ b/_layouts/post.html
+@@ -1,22 +1,4 @@
+ ---
+-layout: default
++layout: entry
+ ---
+-<section class="post-page">
+-    <div class="post-wrap">
+-        <header class="post-header">
+-            <div class="post-date">{{ page.date | date: "%Y. %m. %d." }}</div>
+-            <h1 class="post-title serif">{{ page.title }}</h1>
+-            {% if page.description %}
+-            <p class="post-subtitle">{{ page.description }}</p>
+-            {% endif %}
+-        </header>
+-
+-        <article class="post-content">
+-            {{ content }}
+-        </article>
+-
+-        <div class="post-bottom-nav">
+-            <a class="back-to" href="{{ '/blog' | relative_url }}">← Blog로 돌아가기</a>
+-        </div>
+-    </div>
+-</section>
++{{ content }}
+diff --git a/_movies/.gitkeep b/_movies/.gitkeep
+new file mode 100644
+index 0000000..b3a4252
+--- /dev/null
++++ b/_movies/.gitkeep
+@@ -0,0 +1 @@
++placeholder
+\ No newline at end of file
+diff --git a/_posts/2026-03-27-first-record.md b/_posts/2026-03-27-first-record.md
+index c19bc71..8ad6552 100644
+--- a/_posts/2026-03-27-first-record.md
++++ b/_posts/2026-03-27-first-record.md
+@@ -3,6 +3,7 @@ layout: post
+ title: "서낭의 시작"
+ description: "첫 번째 기록"
+ date: 2026-03-27 13:00:00 +0900
++placeholder: true
+ ---
+ 
+ 서낭(SEONANG)은 마을 어귀를 지키며 액운을 막는 토속신이자, 세계와 세계가 맞닿아 연결되는 접점을 의미합니다. 
+diff --git a/assets/css/site.css b/assets/css/site.css
+index c021144..d4429d3 100644
+--- a/assets/css/site.css
++++ b/assets/css/site.css
+@@ -1,1191 +1,686 @@
+-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap');
++@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap');
+ @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+ 
+ :root {
+-    --bg: #EAE2D6;
+-    --bg-strong: #DDD2C3;
+-    --text: #2F2923;
+-    --text-strong: #2A241F;
+-    --text-muted: #6D6257;
+-    --accent: #9C7A42;
+-    --border: rgba(70, 55, 38, 0.10);
+-    --border-soft: rgba(70, 55, 38, 0.08);
+-    --header-height: 96px;
+-    --header-padding-y: 15px;
+-    --page-gutter: 5%;
+-    --content-width: 1050px;
+-    --post-width: 860px;
+-    --footer-padding-y: 50px;
++  --bg: #f5f7fb;
++  --surface: #ffffff;
++  --surface-alt: #eef3f9;
++  --surface-deep: #e5edf7;
++  --text: #152238;
++  --text-soft: #53657c;
++  --navy: #102743;
++  --navy-strong: #0a1b30;
++  --line: #d8e2ef;
++  --line-strong: #c8d5e6;
++  --tag: #edf3fb;
++  --shadow: 0 20px 48px rgba(16, 39, 67, 0.08);
++  --max-width: 1180px;
++  --content-width: 780px;
++  --radius-lg: 28px;
++  --radius-md: 18px;
++  --radius-sm: 12px;
++  --header-height: 76px;
++}
++
++* {
++  box-sizing: border-box;
+ }
+ 
+ html {
+-    scroll-behavior: smooth;
+-    overflow-y: scroll;
+-    scrollbar-gutter: stable;
+-}
+-
+-html, body {
+-    margin: 0;
+-    padding: 0;
+-    min-height: 100%;
+-    background-color: var(--bg);
+-    background-image:
+-        radial-gradient(circle at 0% 20%, rgba(156, 122, 66, 0.08) 0%, transparent 38%),
+-        radial-gradient(circle at 100% 85%, rgba(120, 102, 76, 0.06) 0%, transparent 40%);
+-    background-attachment: fixed;
+-    color: var(--text);
+-    font-family: 'Pretendard', sans-serif;
+-    line-height: 1.6;
+-    overflow-x: hidden;
++  scroll-behavior: smooth;
+ }
+ 
+ body {
+-    min-height: 100vh;
+-    display: flex;
+-    flex-direction: column;
+-}
+-
+-body.post-template {
+-    line-height: 1.8;
+-}
+-
+-h1, h2, h3, h4, .serif {
+-    font-family: 'Noto Serif KR', serif;
+-    font-weight: 600;
+-}
+-
+-.site-header {
+-    position: fixed;
+-    top: 0;
+-    left: 0;
+-    width: 100%;
+-    padding: var(--header-padding-y) 0;
+-    background: rgba(234, 226, 214, 0.82);
+-    backdrop-filter: blur(14px);
+-    border-bottom: 1px solid var(--border);
+-    z-index: 1000;
+-    box-sizing: border-box;
++  margin: 0;
++  min-height: 100vh;
++  background:
++    radial-gradient(circle at top left, rgba(16, 39, 67, 0.04), transparent 30%),
++    linear-gradient(180deg, #fbfcff 0%, var(--bg) 100%);
++  color: var(--text);
++  font-family: 'Pretendard', sans-serif;
++  line-height: 1.7;
+ }
+ 
+-.site-header-inner {
+-    max-width: calc(var(--content-width) + (var(--page-gutter) * 2));
+-    margin: 0 auto;
+-    padding: 0 var(--page-gutter);
+-    box-sizing: border-box;
+-    display: flex;
+-    justify-content: space-between;
+-    align-items: center;
++body,
++input,
++button,
++textarea {
++  font-family: 'Pretendard', sans-serif;
+ }
+ 
+-.nav-logo {
+-    display: flex;
+-    flex-direction: column;
+-    text-decoration: none;
+-    flex-shrink: 0;
++a {
++  color: inherit;
++  text-decoration: none;
+ }
+ 
+-.nav-logo .serif {
+-    font-size: 2.4rem;
+-    color: var(--text-strong);
+-    letter-spacing: 2px;
+-    line-height: 1.1;
++img {
++  max-width: 100%;
++  display: block;
+ }
+ 
+-.nav-logo .logo-eng {
+-    font-size: 1rem;
+-    color: var(--accent);
+-    font-family: 'Pretendard', sans-serif;
+-    letter-spacing: 3px;
+-    margin-top: 4px;
+-    font-weight: 300;
+-    line-height: 1.1;
++h1,
++h2,
++h3,
++h4,
++h5,
++h6,
++.serif {
++  font-family: 'Noto Serif KR', serif;
++  letter-spacing: -0.02em;
+ }
+ 
+-.nav-links {
+-    display: flex;
+-    align-items: center;
+-    flex-wrap: wrap;
+-}
+-
+-.nav-links a {
+-    color: var(--text-muted);
+-    text-decoration: none;
+-    margin-left: 30px;
+-    font-size: 0.95rem;
+-    text-transform: uppercase;
+-    letter-spacing: 1px;
+-    transition: color 0.3s;
+-    white-space: nowrap;
+-}
+-
+-.nav-links a:hover,
+-.nav-links a.active {
+-    color: var(--text-strong);
+-}
+-
+-.site-main {
+-    flex: 1;
+-    display: block;
+-}
+-
+-section {
+-    padding: 50px var(--page-gutter);
+-    box-sizing: border-box;
+-}
+-
+-.section-inner,
+-.hero-inner {
+-    max-width: var(--content-width);
+-    margin: 0 auto;
+-    width: 100%;
+-}
+-
+-.section-heading {
+-    display: flex;
+-    justify-content: space-between;
+-    align-items: flex-end;
+-    gap: 24px;
+-    margin-bottom: 32px;
++.site-header {
++  position: sticky;
++  top: 0;
++  z-index: 100;
++  background: rgba(245, 247, 251, 0.82);
++  backdrop-filter: blur(16px);
++  border-bottom: 1px solid rgba(16, 39, 67, 0.08);
+ }
+ 
+-.section-heading .section-desc {
+-    margin-bottom: 0;
++.site-header-inner {
++  max-width: var(--max-width);
++  margin: 0 auto;
++  min-height: var(--header-height);
++  padding: 0 28px;
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 24px;
+ }
+ 
+-.section-title {
+-    font-size: 2.2rem;
+-    margin-bottom: 15px;
+-    color: var(--text-strong);
++.site-brand {
++  display: inline-flex;
++  flex-direction: column;
++  gap: 2px;
+ }
+ 
+-.section-title-link,
+-.section-title-link:visited,
+-.section-title-link:hover,
+-.section-title-link:active {
+-    color: #2A241F;
+-    text-decoration: none;
++.site-brand-ko {
++  font-family: 'Noto Serif KR', serif;
++  font-size: 1.5rem;
++  font-weight: 700;
++  color: var(--navy-strong);
+ }
+ 
+-.section-desc {
+-    color: var(--text-muted);
+-    font-size: 1.05rem;
+-    margin-bottom: 56px;
+-    font-weight: 300;
++.site-brand-en {
++  font-size: 0.7rem;
++  letter-spacing: 0.28em;
++  text-transform: uppercase;
++  color: var(--text-soft);
+ }
+ 
+-.section-more {
+-    color: var(--text-muted);
+-    text-decoration: none;
+-    font-size: 0.92rem;
+-    letter-spacing: 0.04em;
+-    text-transform: uppercase;
+-    white-space: nowrap;
+-    transition: color 0.3s ease;
++.site-nav {
++  display: flex;
++  align-items: center;
++  gap: 10px;
++  flex-wrap: wrap;
+ }
+ 
+-.section-more:hover {
+-    color: var(--text-strong);
++.site-nav a {
++  padding: 10px 14px;
++  border-radius: 999px;
++  color: var(--text-soft);
++  font-size: 0.95rem;
++  transition: background-color 0.2s ease, color 0.2s ease;
+ }
+ 
+-/* Home */
+-#about {
+-    position: relative;
+-    min-height: 76vh;
+-    display: flex;
+-    align-items: center;
+-    overflow: hidden;
+-    isolation: isolate;
+-    padding-top: calc(var(--header-height) + 40px);
++.site-nav a:hover,
++.site-nav a.is-active {
++  background: rgba(16, 39, 67, 0.08);
++  color: var(--navy);
+ }
+ 
+-#portfolio {
+-    background-color: #EEE7DC;
+-    padding-bottom: 90px;
++.site-main {
++  display: block;
+ }
+ 
+-#blog {
+-    background-color: #EAE2D6;
+-    padding-bottom: 90px;
++.hero-section,
++.home-section-block,
++.archive-page,
++.entry-page {
++  padding: 40px 28px;
+ }
+ 
+-.bg-video {
+-    position: absolute;
+-    inset: 0;
+-    width: 100%;
+-    height: 100%;
+-    object-fit: cover;
+-    z-index: 0;
+-    filter: brightness(1.1);
++.hero-inner,
++.section-shell,
++.archive-shell,
++.entry-wrap,
++.site-footer-inner {
++  max-width: var(--max-width);
++  margin: 0 auto;
+ }
+ 
+-.video-overlay {
+-    position: absolute;
+-    inset: 0;
+-    background: linear-gradient(rgba(10, 10, 10, 0.32), rgba(10, 10, 10, 0.58));
+-    z-index: 1;
++.hero-section {
++  padding-top: 84px;
++  padding-bottom: 56px;
+ }
+ 
+ .hero-inner {
+-    position: relative;
+-    z-index: 2;
+-    display: flex;
+-    flex-direction: column;
+-    align-items: flex-start;
+-}
+-
+-.hero-headline {
+-    font-size: 3.2rem;
+-    color: #ffffff;
+-    margin: 0 0 28px 0;
+-    word-break: keep-all;
+-    line-height: 1.3;
+-    text-align: left;
++  padding: 64px;
++  border: 1px solid rgba(16, 39, 67, 0.08);
++  border-radius: 36px;
++  background:
++    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(238,243,249,0.96)),
++    linear-gradient(135deg, rgba(16,39,67,0.04), transparent);
++  box-shadow: var(--shadow);
+ }
+ 
+-.definition-box {
+-    border-top: 1px solid rgba(255,255,255,0.34);
+-    border-bottom: 1px solid rgba(255,255,255,0.34);
+-    padding: 20px 0;
+-    max-width: 600px;
+-    width: 100%;
+-    text-align: left;
+-    margin-bottom: 15px;
+-    background: transparent;
++.eyebrow,
++.section-kicker {
++  margin: 0 0 12px;
++  font-size: 0.78rem;
++  letter-spacing: 0.18em;
++  text-transform: uppercase;
++  color: var(--text-soft);
+ }
+ 
+-.definition-box h1 {
+-    font-size: 2.5rem;
+-    margin: 0;
+-    display: inline;
+-    color: #ffffff;
++.hero-title {
++  margin: 0;
++  font-size: clamp(2.6rem, 6vw, 4.5rem);
++  line-height: 1.08;
++  color: var(--navy-strong);
+ }
+ 
+-.definition-box .pos {
+-    margin-left: 10px;
+-    color: rgba(255,255,255,0.74);
+-    font-size: 1rem;
+-    font-weight: 300;
++.hero-copy {
++  max-width: 720px;
++  margin: 22px 0 0;
++  font-size: 1.18rem;
++  color: var(--text);
+ }
+ 
+-.definition-box ol {
+-    margin: 12px 0 0 20px;
+-    padding: 0;
+-    color: rgba(255,255,255,0.84);
+-    font-size: 1rem;
+-    line-height: 1.8;
++.hero-copy-subtle {
++  color: var(--text-soft);
+ }
+ 
+-.hero-subtext {
+-    margin: 0;
+-    color: rgba(255,255,255,0.88);
+-    font-size: 1.08rem;
+-    line-height: 1.9;
+-    max-width: 720px;
+-    text-align: left;
+-    word-break: keep-all;
++.hero-actions {
++  display: flex;
++  gap: 12px;
++  flex-wrap: wrap;
++  margin-top: 32px;
+ }
+ 
+-/* Legacy services */
+-.grid-container {
+-    display: grid;
+-    grid-template-columns: repeat(3, minmax(0, 1fr));
+-    gap: 24px;
++.button-primary,
++.button-secondary {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  min-height: 48px;
++  padding: 0 20px;
++  border-radius: 999px;
++  border: 1px solid transparent;
++  font-weight: 600;
+ }
+ 
+-.service-card {
+-    background: rgba(255, 248, 240, 0.62);
+-    backdrop-filter: blur(10px);
+-    border: 1px solid var(--border);
+-    padding: 28px 24px;
+-    box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
+-    box-sizing: border-box;
++.button-primary {
++  background: var(--navy);
++  color: #fff;
+ }
+ 
+-.service-card h3 {
+-    margin-top: 0;
+-    margin-bottom: 14px;
+-    color: var(--text-strong);
+-    font-size: 1.28rem;
++.button-secondary {
++  background: transparent;
++  border-color: var(--line-strong);
++  color: var(--navy);
+ }
+ 
+-.service-card p {
+-    margin: 0;
+-    color: var(--text-muted);
+-    font-weight: 300;
+-    line-height: 1.75;
++.home-section-alt {
++  background: linear-gradient(180deg, rgba(229, 237, 247, 0.55), rgba(245, 247, 251, 0));
+ }
+ 
+-/* Portfolio */
+-.portfolio-grid {
+-    display: grid;
+-    grid-template-columns: repeat(3, minmax(0, 1fr));
+-    gap: 24px;
++.section-heading {
++  display: flex;
++  align-items: end;
++  justify-content: space-between;
++  gap: 24px;
++  margin-bottom: 24px;
+ }
+ 
+-.portfolio-card {
+-    background: rgba(255, 248, 240, 0.62);
+-    backdrop-filter: blur(10px);
+-    border: 1px solid var(--border);
+-    box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
+-    box-sizing: border-box;
+-    cursor: pointer;
+-    overflow: hidden;
+-    transition: all 0.4s ease;
+-    display: flex;
+-    flex-direction: column;
+-    min-width: 0;
++.section-heading.stacked {
++  align-items: start;
+ }
+ 
+-.portfolio-card:hover {
+-    border-color: rgba(156, 122, 66, 0.35);
+-    transform: translateY(-4px);
+-    background: rgba(255, 250, 244, 0.82);
+-    box-shadow: 0 14px 32px rgba(80, 62, 38, 0.10);
++.section-title,
++.archive-title,
++.entry-title {
++  margin: 0;
++  font-size: clamp(2rem, 4vw, 3rem);
++  line-height: 1.15;
++  color: var(--navy-strong);
+ }
+ 
+-.portfolio-thumb {
+-    width: 100%;
+-    aspect-ratio: 4 / 3;
+-    overflow: hidden;
+-    background: rgba(70, 55, 38, 0.04);
++.section-description,
++.archive-description,
++.entry-description {
++  margin: 0;
++  max-width: 520px;
++  color: var(--text-soft);
+ }
+ 
+-.portfolio-thumb img {
+-    width: 100%;
+-    height: 100%;
+-    object-fit: cover;
+-    display: block;
++.section-link {
++  color: var(--navy);
++  font-weight: 600;
++  white-space: nowrap;
+ }
+ 
+-.portfolio-body {
+-    padding: 24px 22px 26px;
++.home-grid {
++  display: grid;
++  gap: 18px;
+ }
+ 
+-.portfolio-body h3 {
+-    margin: 0 0 12px 0;
+-    color: var(--text-strong);
+-    font-size: 1.28rem;
+-    line-height: 1.4;
+-    word-break: keep-all;
++.home-grid-three {
++  grid-template-columns: repeat(3, minmax(0, 1fr));
+ }
+ 
+-.portfolio-body p {
+-    margin: 0;
+-    color: var(--text-muted);
+-    font-weight: 300;
+-    line-height: 1.75;
++.overview-card,
++.list-card,
++.archive-card-link,
++.empty-panel,
++.mini-list-item {
++  border: 1px solid rgba(16, 39, 67, 0.08);
++  background: rgba(255, 255, 255, 0.9);
++  border-radius: var(--radius-lg);
+ }
+ 
+-.portfolio-track {
+-    display: flex;
+-    gap: 20px;
+-    overflow-x: auto;
+-    scroll-snap-type: x mandatory;
+-    scroll-behavior: smooth;
+-    padding: 10px 0;
+-    width: 100%;
+-    -ms-overflow-style: none;
+-    scrollbar-width: none;
++.overview-card {
++  display: flex;
++  flex-direction: column;
++  gap: 14px;
++  padding: 28px;
++  transition: transform 0.2s ease, box-shadow 0.2s ease;
+ }
+ 
+-.portfolio-track::-webkit-scrollbar {
+-    display: none;
++.overview-card:hover,
++.list-card:hover,
++.archive-card-link:hover,
++.mini-list-item:hover {
++  transform: translateY(-2px);
++  box-shadow: var(--shadow);
+ }
+ 
+-.carousel-portfolio-card {
+-    flex: 0 0 calc(33.333% - 14px);
+-    min-width: 300px;
+-    scroll-snap-align: start;
++.overview-card-label {
++  color: var(--text-soft);
++  font-size: 0.82rem;
++  letter-spacing: 0.14em;
++  text-transform: uppercase;
+ }
+ 
+-.portfolio-list-grid {
+-    grid-template-columns: repeat(3, minmax(0, 1fr));
++.overview-card h3,
++.list-card h3,
++.archive-card h2,
++.entry-content h2,
++.entry-content h3,
++.entry-content h4 {
++  margin: 0;
++  color: var(--navy-strong);
+ }
+ 
+-.portfolio-list-card .portfolio-thumb {
+-    aspect-ratio: 4 / 3;
++.overview-card p,
++.list-card p,
++.archive-card p {
++  margin: 0;
++  color: var(--text-soft);
+ }
+ 
+-/* Archive / home carousel */
+-.carousel-wrapper {
+-    position: relative;
++.overview-card strong {
++  margin-top: auto;
++  color: var(--navy);
+ }
+ 
+-.carousel-track {
+-    display: flex;
+-    gap: 20px;
+-    overflow-x: auto;
+-    scroll-snap-type: x mandatory;
+-    scroll-behavior: smooth;
+-    padding: 10px 0;
+-    width: 100%;
+-    -ms-overflow-style: none;
+-    scrollbar-width: none;
++.home-list,
++.archive-list {
++  display: grid;
++  gap: 16px;
+ }
+ 
+-.carousel-track::-webkit-scrollbar {
+-    display: none;
++.home-list {
++  grid-template-columns: repeat(2, minmax(0, 1fr));
+ }
+ 
+-.carousel-card {
+-    flex: 0 0 calc(33.333% - 14px);
+-    min-width: 300px;
+-    background: rgba(255, 248, 240, 0.62);
+-    backdrop-filter: blur(10px);
+-    border: 1px solid var(--border);
+-    padding: 35px 30px;
+-    scroll-snap-align: start;
+-    cursor: pointer;
+-    transition: all 0.4s;
+-    display: flex;
+-    flex-direction: column;
+-    justify-content: space-between;
+-    box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
+-    box-sizing: border-box;
++.list-card,
++.archive-card-link {
++  display: block;
++  padding: 24px;
+ }
+ 
+-.carousel-card:hover {
+-    border-color: rgba(156, 122, 66, 0.35);
+-    transform: translateY(-4px);
+-    background: rgba(255, 250, 244, 0.82);
+-    box-shadow: 0 14px 32px rgba(80, 62, 38, 0.10);
++.list-card-meta,
++.archive-card-meta,
++.entry-meta,
++.archive-summary {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 10px;
++  color: var(--text-soft);
++  font-size: 0.9rem;
+ }
+ 
+-.card-date {
+-    color: #7A6D61;
+-    font-size: 0.85rem;
+-    margin-bottom: 15px;
+-    font-weight: 300;
++.home-dual-grid {
++  display: grid;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++  gap: 32px;
+ }
+ 
+-.card-title {
+-    font-size: 1.3rem;
+-    margin: 0 0 15px 0;
+-    color: var(--text-strong);
+-    line-height: 1.4;
++.mini-list {
++  display: grid;
++  gap: 12px;
+ }
+ 
+-.card-excerpt {
+-    color: var(--text-muted);
+-    font-size: 0.95rem;
+-    line-height: 1.6;
+-    margin: 0;
+-    font-weight: 300;
+-    display: -webkit-box;
+-    -webkit-line-clamp: 3;
+-    -webkit-box-orient: vertical;
+-    overflow: hidden;
++.mini-list-item {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 20px;
++  padding: 18px 20px;
+ }
+ 
+-.carousel-btn {
+-    background: rgba(255, 248, 240, 0.72);
+-    border: 1px solid var(--border);
+-    color: var(--text-strong);
+-    width: 45px;
+-    height: 45px;
+-    border-radius: 50%;
+-    cursor: pointer;
+-    display: flex;
+-    justify-content: center;
+-    align-items: center;
+-    position: absolute;
+-    z-index: 10;
+-    transition: all 0.3s;
+-    font-size: 1.2rem;
+-    backdrop-filter: blur(6px);
+-    top: 50%;
+-    transform: translateY(-50%);
++.mini-list-item strong {
++  display: block;
++  color: var(--navy-strong);
+ }
+ 
+-.carousel-btn:hover {
+-    background: rgba(156, 122, 66, 0.12);
+-    border-color: rgba(156, 122, 66, 0.30);
++.mini-list-item span,
++.mini-list-item time {
++  color: var(--text-soft);
++  font-size: 0.92rem;
+ }
+ 
+-.carousel-btn.prev {
+-    left: -20px;
++.empty-panel {
++  padding: 22px 24px;
++  color: var(--text-soft);
+ }
+ 
+-.carousel-btn.next {
+-    right: -20px;
++.empty-panel.small {
++  min-height: 96px;
++  display: flex;
++  align-items: center;
+ }
+ 
+-/* Blog / list pages */
+-.blog-page {
+-    padding: calc(var(--header-height) + 54px) var(--page-gutter) 100px;
+-    box-sizing: border-box;
++.archive-shell {
++  display: grid;
++  grid-template-columns: 300px minmax(0, 1fr);
++  gap: 28px;
++  align-items: start;
+ }
+ 
+-.page-inner {
+-    max-width: var(--content-width);
+-    margin: 0 auto;
+-    width: 100%;
++.archive-sidebar-inner {
++  position: sticky;
++  top: calc(var(--header-height) + 20px);
++  padding: 24px;
++  border: 1px solid rgba(16, 39, 67, 0.08);
++  border-radius: var(--radius-lg);
++  background: rgba(255,255,255,0.92);
+ }
+ 
+-.page-header {
+-    margin-bottom: 52px;
+-    padding-bottom: 28px;
+-    border-bottom: 1px solid var(--border);
++.archive-search {
++  display: block;
++  margin-top: 24px;
+ }
+ 
+-.page-title {
+-    margin: 0 0 14px 0;
+-    font-size: 3rem;
+-    line-height: 1.25;
+-    color: var(--text-strong);
++.archive-search span,
++.archive-tags-head {
++  display: block;
++  margin-bottom: 10px;
++  color: var(--navy);
++  font-size: 0.92rem;
++  font-weight: 600;
+ }
+ 
+-.page-desc {
+-    margin: 0;
+-    color: var(--text-muted);
+-    font-size: 1.05rem;
+-    font-weight: 300;
++.archive-search input {
++  width: 100%;
++  height: 46px;
++  padding: 0 14px;
++  border: 1px solid var(--line-strong);
++  border-radius: 12px;
++  background: var(--surface);
++  color: var(--text);
++  outline: none;
+ }
+ 
+-.post-grid {
+-    display: grid;
+-    grid-template-columns: repeat(2, minmax(0, 1fr));
+-    gap: 30px;
++.archive-search input:focus {
++  border-color: rgba(16, 39, 67, 0.4);
++  box-shadow: 0 0 0 4px rgba(16, 39, 67, 0.08);
+ }
+ 
+-.post-card {
+-    display: flex;
+-    flex-direction: column;
+-    justify-content: space-between;
+-    min-height: 240px;
+-    padding: 34px 30px;
+-    background: rgba(255, 248, 240, 0.62);
+-    backdrop-filter: blur(10px);
+-    border: 1px solid var(--border);
+-    text-decoration: none;
+-    color: inherit;
+-    box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
+-    transition: all 0.4s ease;
+-    box-sizing: border-box;
+-}
+-
+-.post-card:hover {
+-    transform: translateY(-4px);
+-    border-color: rgba(156, 122, 66, 0.35);
+-    background: rgba(255, 250, 244, 0.82);
+-    box-shadow: 0 14px 32px rgba(80, 62, 38, 0.10);
+-}
+-
+-.post-date {
+-    color: #7A6D61;
+-    font-size: 0.85rem;
+-    margin-bottom: 14px;
+-    font-weight: 300;
+-}
+-
+-.post-card-title {
+-    margin: 0 0 16px 0;
+-    font-size: 1.45rem;
+-    line-height: 1.4;
+-    color: var(--text-strong);
+-    word-break: keep-all;
++.archive-tags {
++  margin-top: 22px;
+ }
+ 
+-.post-excerpt {
+-    margin: 0;
+-    color: var(--text-muted);
+-    font-size: 0.96rem;
+-    line-height: 1.7;
+-    font-weight: 300;
++.tag-filter-list,
++.tag-list {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 8px;
+ }
+ 
+-.empty-state {
+-    padding: 44px 38px;
+-    background: rgba(255, 248, 240, 0.62);
+-    border: 1px solid var(--border);
+-    color: var(--text-muted);
+-    font-weight: 300;
+-    box-sizing: border-box;
++.tag-filter,
++.tag-chip {
++  display: inline-flex;
++  align-items: center;
++  min-height: 34px;
++  padding: 0 12px;
++  border-radius: 999px;
++  border: 1px solid transparent;
++  background: var(--tag);
++  color: var(--navy);
++  font-size: 0.88rem;
+ }
+ 
+-/* Post / Portfolio detail */
+-.post-page {
+-    padding: calc(var(--header-height) + 54px) var(--page-gutter) 90px;
+-    box-sizing: border-box;
++.tag-filter {
++  cursor: pointer;
+ }
+ 
+-.post-wrap {
+-    max-width: var(--post-width);
+-    margin: 0 auto;
+-    width: 100%;
++.tag-filter.is-active {
++  background: var(--navy);
++  color: #fff;
+ }
+ 
+-.post-header {
+-    margin-bottom: 48px;
+-    padding-bottom: 28px;
+-    border-bottom: 1px solid var(--border);
++.tag-list.compact .tag-chip {
++  min-height: 30px;
++  font-size: 0.82rem;
+ }
+ 
+-body.post-template .post-date {
+-    font-size: 0.95rem;
+-    font-weight: 300;
+-    margin-bottom: 12px;
++.archive-card.is-hidden {
++  display: none;
+ }
+ 
+-.post-title {
+-    font-size: 3rem;
+-    line-height: 1.3;
+-    margin: 0 0 14px 0;
+-    color: var(--text-strong);
+-    word-break: keep-all;
++.entry-wrap {
++  max-width: var(--content-width);
+ }
+ 
+-.post-subtitle {
+-    color: var(--text-muted);
+-    font-size: 1.05rem;
+-    font-weight: 300;
+-    margin: 0;
++.entry-back {
++  display: inline-flex;
++  margin-bottom: 20px;
++  color: var(--navy);
++  font-weight: 600;
+ }
+ 
+-.post-content {
+-    font-size: 1.05rem;
+-    color: #3A332D;
++.entry-header {
++  margin-bottom: 32px;
+ }
+ 
+-.post-content p {
+-    margin: 0 0 1.4em 0;
++.entry-description {
++  margin-top: 14px;
++  font-size: 1.05rem;
+ }
+ 
+-.post-content h2,
+-.post-content h3,
+-.post-content h4 {
+-    color: var(--text-strong);
+-    margin-top: 2.4em;
+-    margin-bottom: 0.8em;
+-    line-height: 1.4;
++.entry-meta {
++  margin-top: 18px;
+ }
+ 
+-.post-content ul,
+-.post-content ol {
+-    margin: 0 0 1.4em 1.4em;
+-    padding: 0;
++.entry-content {
++  color: var(--text);
++  font-size: 1.04rem;
+ }
+ 
+-.post-content li {
+-    margin-bottom: 0.5em;
++.entry-content > *:first-child {
++  margin-top: 0;
+ }
+ 
+-.post-content blockquote {
+-    margin: 2em 0;
+-    padding: 1px 0 1px 20px;
+-    border-left: 2px solid rgba(156, 122, 66, 0.5);
+-    color: #5E544A;
++.entry-content > *:last-child {
++  margin-bottom: 0;
+ }
+ 
+-.post-content a {
+-    color: #8A6737;
+-    text-decoration: none;
+-    border-bottom: 1px solid rgba(138, 103, 55, 0.25);
++.prose h2,
++.prose h3,
++.prose h4 {
++  margin-top: 2.2em;
++  margin-bottom: 0.8em;
+ }
+ 
+-.post-content a:hover {
+-    color: #6F512A;
+-    border-bottom-color: rgba(111, 81, 42, 0.45);
++.prose p,
++.prose ul,
++.prose ol,
++.prose blockquote,
++.prose table,
++.prose pre {
++  margin: 1.15em 0;
+ }
+ 
+-.post-content img {
+-    max-width: 100%;
+-    height: auto;
+-    display: block;
+-    margin: 2em auto;
++.prose ul,
++.prose ol {
++  padding-left: 1.3em;
+ }
+ 
+-.post-content hr {
+-    border: 0;
+-    border-top: 1px solid var(--border);
+-    margin: 2.5em 0;
++.prose li + li {
++  margin-top: 0.4em;
+ }
+ 
+-.portfolio-cover {
+-    margin: 0 0 36px 0;
+-    border: 1px solid var(--border);
+-    overflow: hidden;
+-    background: rgba(255, 248, 240, 0.4);
++.prose blockquote {
++  margin-left: 0;
++  padding: 16px 18px;
++  border-left: 4px solid var(--navy);
++  background: rgba(16, 39, 67, 0.04);
++  border-radius: 0 14px 14px 0;
++  color: var(--text-soft);
+ }
+ 
+-.portfolio-cover img {
+-    display: block;
+-    width: 100%;
+-    max-height: 620px;
+-    object-fit: cover;
++.prose code {
++  padding: 0.15em 0.38em;
++  border-radius: 6px;
++  background: rgba(16, 39, 67, 0.08);
++  font-size: 0.92em;
+ }
+ 
+-.post-bottom-nav {
+-    margin-top: 64px;
+-    padding-top: 28px;
+-    border-top: 1px solid var(--border);
++.prose pre {
++  padding: 18px;
++  overflow-x: auto;
++  border-radius: 16px;
++  background: #0f1726;
++  color: #edf3fb;
+ }
+ 
+-.back-to {
+-    display: inline-block;
+-    color: var(--text-muted);
+-    text-decoration: none;
+-    font-size: 0.95rem;
++.prose pre code {
++  padding: 0;
++  background: transparent;
++  color: inherit;
+ }
+ 
+-.back-to:hover {
+-    color: var(--text-strong);
++.prose table {
++  width: 100%;
++  border-collapse: collapse;
++  overflow: hidden;
++  border-radius: 16px;
++  border: 1px solid var(--line);
+ }
+ 
+-.back-home-wrap {
+-    margin-top: 72px;
++.prose th,
++.prose td {
++  padding: 12px 14px;
++  border-bottom: 1px solid var(--line);
++  text-align: left;
++  vertical-align: top;
+ }
+ 
+-/* Contact */
+-.contact-page {
+-    padding: calc(var(--header-height) + 54px) var(--page-gutter) 100px;
+-    box-sizing: border-box;
++.prose th {
++  background: var(--surface-alt);
+ }
+ 
+-.contact-single {
+-    max-width: 700px;
+-    margin: 0 auto;
+-    width: 100%;
++.prose hr {
++  margin: 2.4em 0;
++  border: 0;
++  border-top: 1px solid var(--line);
+ }
+ 
+-.contact-kicker {
+-    margin: 0 0 18px 0;
+-    font-size: 0.78rem;
+-    letter-spacing: 0.18em;
+-    text-transform: uppercase;
+-    color: rgba(34, 29, 24, 0.58);
+-}
+-
+-.contact-title {
+-    margin: 0 0 18px 0;
+-    font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+-    line-height: 1.2;
+-    color: var(--text-strong);
+-    white-space: nowrap;
+-    text-align: left;
+-}
+-
+-.contact-lead {
+-    margin: 0 0 42px 0;
+-    font-size: 1rem;
+-    line-height: 1.8;
+-    color: rgba(34, 29, 24, 0.78);
+-    font-weight: 300;
+-    white-space: nowrap;
+-    text-align: left;
+-}
+-
+-.contact-form-wrap {
+-    width: 90%;
+-    background: #f2ede4;
+-    backdrop-filter: blur(10px);
+-    border: 1px solid var(--border);
+-    box-shadow: 0 10px 30px rgba(80, 62, 38, 0.05);
+-    padding: 40px 40px 36px;
+-    box-sizing: border-box;
+-}
+-
+-.contact-form {
+-    display: flex;
++.site-footer {
++  padding: 24px 28px 48px;
++}
++
++.site-footer-inner {
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  gap: 16px;
++  padding-top: 24px;
++  border-top: 1px solid rgba(16, 39, 67, 0.08);
++  color: var(--text-soft);
++  font-size: 0.92rem;
++}
++
++.site-footer-muted {
++  margin: 0;
++}
++
++@media (max-width: 1080px) {
++  .archive-shell {
++    grid-template-columns: 1fr;
++  }
++
++  .archive-sidebar-inner {
++    position: static;
++  }
++
++  .home-grid-three,
++  .home-list,
++  .home-dual-grid {
++    grid-template-columns: 1fr;
++  }
++}
++
++@media (max-width: 760px) {
++  .site-header-inner,
++  .hero-section,
++  .home-section-block,
++  .archive-page,
++  .entry-page,
++  .site-footer {
++    padding-left: 18px;
++    padding-right: 18px;
++  }
++
++  .site-header-inner {
++    min-height: auto;
++    padding-top: 14px;
++    padding-bottom: 14px;
++    align-items: flex-start;
+     flex-direction: column;
+-    gap: 24px;
+-}
++  }
++
++  .hero-inner,
++  .archive-sidebar-inner,
++  .overview-card,
++  .list-card,
++  .archive-card-link {
++    padding: 20px;
++  }
++
++  .hero-section {
++    padding-top: 36px;
++  }
++
++  .hero-title,
++  .section-title,
++  .archive-title,
++  .entry-title {
++    word-break: keep-all;
++  }
+ 
+-.form-row {
+-    display: flex;
++  .section-heading,
++  .mini-list-item,
++  .site-footer-inner {
+     flex-direction: column;
+-    gap: 10px;
+-}
+-
+-.form-row label {
+-    font-size: 0.84rem;
+-    letter-spacing: 0.08em;
+-    text-transform: uppercase;
+-    color: rgba(34, 29, 24, 0.72);
+-}
++    align-items: flex-start;
++  }
+ 
+-.form-row input,
+-.form-row textarea {
++  .button-primary,
++  .button-secondary {
+     width: 100%;
+-    border: none;
+-    border-bottom: 1px solid rgba(34, 29, 24, 0.18);
+-    background: #FAF8F5;
+-    padding: 10px 0 12px;
+-    font: inherit;
+-    font-size: 1rem;
+-    color: var(--text-strong);
+-    outline: none;
+-    border-radius: 0;
+-    box-sizing: border-box;
+-}
+-
+-.form-row textarea {
+-    resize: vertical;
+-    min-height: 160px;
+-}
+-
+-.form-row input:focus,
+-.form-row textarea:focus {
+-    border-bottom-color: var(--text-strong);
+-}
+-
+-.contact-form button {
+-    margin: 8px auto 0;
+-    display: block;
+-    width: fit-content;
+-    min-width: 168px;
+-    padding: 13px 24px;
+-    border: 1px solid var(--text-strong);
+-    background: var(--text-strong);
+-    color: #f8f3ec;
+-    font: inherit;
+-    font-size: 0.92rem;
+-    letter-spacing: 0.08em;
+-    text-transform: uppercase;
+-    cursor: pointer;
+-    transition: background 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+-}
+-
+-.contact-form button:hover {
+-    background: transparent;
+-    color: var(--text-strong);
+-}
+-
+-.form-status {
+-    margin: 6px 0 0;
+-    font-size: 0.92rem;
+-    line-height: 1.7;
+-    color: rgba(34, 29, 24, 0.72);
+-}
+-
+-/* Footer */
+-.site-footer {
+-    margin-top: auto;
+-    background-color: var(--bg-strong);
+-    border-top: 1px solid var(--border-soft);
+-    padding: var(--footer-padding-y) var(--page-gutter);
+-    text-align: center;
+-    color: var(--text-muted);
+-    font-size: 0.85rem;
+-    font-weight: 300;
+-    box-sizing: border-box;
+-}
+-
+-.site-footer p {
+-    margin: 0;
+-}
+-
+-/* Responsive */
+-@media (max-width: 960px) {
+-    .section-heading {
+-        flex-direction: column;
+-        align-items: flex-start;
+-    }
+-
+-    .portfolio-list-grid {
+-        grid-template-columns: repeat(2, minmax(0, 1fr));
+-    }
+-}
+-
+-@media (max-width: 900px) {
+-    .post-grid {
+-        grid-template-columns: 1fr;
+-    }
+-
+-    .portfolio-grid {
+-        grid-template-columns: 1fr;
+-    }
+-
+-    .portfolio-list-grid {
+-        grid-template-columns: 1fr;
+-    }
+-}
+-
+-@media (max-width: 768px) {
+-    :root {
+-        --header-height: 76px;
+-        --header-padding-y: 12px;
+-        --page-gutter: 20px;
+-        --footer-padding-y: 32px;
+-    }
+-
+-    section {
+-        padding: 36px var(--page-gutter);
+-    }
+-
+-    .site-header {
+-        padding: var(--header-padding-y) 0;
+-    }
+-
+-    .site-header-inner {
+-        align-items: center;
+-    }
+-
+-    .nav-logo .serif {
+-        font-size: 1.7rem;
+-        letter-spacing: 1px;
+-    }
+-
+-    .nav-logo .logo-eng {
+-        font-size: 0.8rem;
+-        letter-spacing: 2px;
+-        margin-top: 3px;
+-    }
+-
+-    .nav-links {
+-        align-items: center;
+-    }
+-
+-    .nav-links a {
+-        margin-left: 12px;
+-        font-size: 0.78rem;
+-        letter-spacing: 0.04em;
+-    }
+-
+-    #about {
+-        min-height: 62vh;
+-        padding-top: calc(var(--header-height) + 24px);
+-    }
+-
+-    #portfolio,
+-    #blog {
+-        padding-bottom: 56px;
+-    }
+-
+-    .hero-headline {
+-        font-size: 1.85rem;
+-        margin-bottom: 20px;
+-        line-height: 1.35;
+-    }
+-
+-    .definition-box {
+-        max-width: 100%;
+-        padding: 14px 0;
+-        margin-bottom: 12px;
+-    }
+-
+-    .definition-box h1 {
+-        font-size: 2rem;
+-    }
+-
+-    .definition-box .pos {
+-        font-size: 0.92rem;
+-    }
+-
+-    .definition-box ol {
+-        margin: 10px 0 0 18px;
+-        font-size: 0.92rem;
+-        line-height: 1.7;
+-    }
+-
+-    .hero-subtext {
+-        font-size: 0.92rem;
+-        line-height: 1.75;
+-        max-width: 100%;
+-    }
+-
+-    .section-heading {
+-        gap: 14px;
+-        margin-bottom: 20px;
+-    }
+-
+-    .section-title {
+-        font-size: 1.65rem;
+-        margin-bottom: 8px;
+-    }
+-
+-    .section-desc {
+-        font-size: 0.92rem;
+-        line-height: 1.65;
+-        margin-bottom: 0;
+-    }
+-
+-    .section-more {
+-        font-size: 0.78rem;
+-        letter-spacing: 0.06em;
+-    }
+-
+-    .carousel-card,
+-    .carousel-portfolio-card {
+-        flex: 0 0 88%;
+-        min-width: 0;
+-    }
+-
+-    .carousel-track,
+-    .portfolio-track {
+-        gap: 14px;
+-        padding: 6px 0;
+-    }
+-
+-    .carousel-card {
+-        padding: 24px 20px;
+-    }
+-
+-    .portfolio-body {
+-        padding: 18px 18px 20px;
+-    }
+-
+-    .portfolio-body h3,
+-    .card-title {
+-        font-size: 1.1rem;
+-        margin-bottom: 10px;
+-    }
+-
+-    .card-date,
+-    .post-date {
+-        font-size: 0.78rem;
+-        margin-bottom: 10px;
+-    }
+-
+-    .card-excerpt,
+-    .portfolio-body p,
+-    .post-excerpt {
+-        font-size: 0.9rem;
+-        line-height: 1.65;
+-    }
+-
+-    .carousel-btn {
+-        display: none;
+-    }
+-
+-    .blog-page,
+-    .post-page,
+-    .contact-page {
+-        padding-top: calc(var(--header-height) + 28px);
+-        padding-bottom: 56px;
+-    }
+-
+-    .page-header,
+-    .post-header {
+-        margin-bottom: 34px;
+-        padding-bottom: 20px;
+-    }
+-
+-    .page-title,
+-    .post-title,
+-    .contact-title {
+-        font-size: 1.9rem;
+-        line-height: 1.3;
+-    }
+-
+-    .page-desc,
+-    .post-subtitle,
+-    .contact-lead {
+-        font-size: 0.95rem;
+-        line-height: 1.7;
+-    }
+-
+-    .post-content {
+-        font-size: 0.98rem;
+-        line-height: 1.8;
+-    }
+-
+-    .post-content h2,
+-    .post-content h3,
+-    .post-content h4 {
+-        margin-top: 2em;
+-        margin-bottom: 0.7em;
+-    }
+-
+-    .post-bottom-nav {
+-        margin-top: 48px;
+-        padding-top: 22px;
+-    }
+-
+-    .back-home-wrap {
+-        margin-top: 48px;
+-    }
+-
+-    .contact-title,
+-    .contact-lead {
+-        white-space: normal;
+-    }
+-
+-    .contact-form-wrap {
+-        width: 100%;
+-        padding: 24px 20px;
+-    }
+-
+-    .contact-form {
+-        gap: 20px;
+-    }
+-
+-    .form-row {
+-        gap: 8px;
+-    }
+-
+-    .form-row label {
+-        font-size: 0.78rem;
+-    }
+-
+-    .form-row input,
+-    .form-row textarea {
+-        font-size: 0.95rem;
+-        padding: 9px 0 11px;
+-    }
+-
+-    .form-row textarea {
+-        min-height: 140px;
+-    }
+-
+-    .contact-form button {
+-        width: 100%;
+-        min-width: 0;
+-        padding: 12px 18px;
+-        font-size: 0.86rem;
+-    }
+-
+-    .site-footer {
+-        font-size: 0.78rem;
+-    }
+-}
+-
+-@media (max-width: 480px) {
+-    :root {
+-        --page-gutter: 16px;
+-    }
+-
+-    .nav-logo .serif {
+-        font-size: 1.5rem;
+-    }
+-
+-    .nav-logo .logo-eng {
+-        font-size: 0.72rem;
+-    }
+-
+-    .nav-links a {
+-        margin-left: 10px;
+-        font-size: 0.72rem;
+-    }
+-
+-    .hero-headline {
+-        font-size: 1.65rem;
+-    }
+-
+-    .definition-box h1 {
+-        font-size: 1.8rem;
+-    }
+-
+-    .section-title {
+-        font-size: 1.5rem;
+-    }
+-
+-    .page-title,
+-    .post-title,
+-    .contact-title {
+-        font-size: 1.7rem;
+-    }
+-
+-    .carousel-card,
+-    .carousel-portfolio-card {
+-        flex: 0 0 92%;
+-    }
+-
+-    .carousel-card {
+-        padding: 22px 18px;
+-    }
+-
+-    .portfolio-body {
+-        padding: 16px 16px 18px;
+-    }
++  }
+ }
+diff --git a/blog.html b/blog.html
+index 7d47a4c..d703bf6 100644
+--- a/blog.html
++++ b/blog.html
+@@ -1,35 +1,77 @@
+ ---
+ layout: default
+-title: Blog - 서낭
++title: 글 모음
+ permalink: /blog/
++section: blog
++description: 생각과 기록을 모아둔 글 아카이브
+ ---
++{% assign items = site.posts | where_exp: "item", "item.placeholder != true" %}
++{% capture tag_pool %}{% for item in items %}{% for tag in item.tags %}{{ tag | slugify }}::{{ tag }}|{% endfor %}{% endfor %}{% endcapture %}
++{% assign all_tags = tag_pool | split: '|' | uniq | sort %}
+ 
+-<section class="blog-page">
+-    <div class="page-inner">
+-        <header class="page-header">
+-            <h1 class="page-title">Blog</h1>
+-            <p class="page-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
+-        </header>
++<section class="archive-page" data-archive-root>
++  <div class="archive-shell">
++    <aside class="archive-sidebar">
++      <div class="archive-sidebar-inner">
++        <p class="eyebrow">Archive</p>
++        <h1 class="archive-title">글 모음</h1>
++        <p class="archive-description">일상 관찰, 존재에 대한 생각, 비즈니스 메모를 한곳에서 봅니다.</p>
+ 
+-        {% if site.posts.size > 0 %}
+-        <div class="post-grid">
+-            {% for post in site.posts %}
+-            <a href="{{ post.url | relative_url }}" class="post-card">
+-                <div>
+-                    <div class="post-date">{{ post.date | date: "%Y. %m. %d." }}</div>
+-                    <h2 class="post-card-title serif">{{ post.title }}</h2>
+-                </div>
+-                <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 24 }}</p>
+-            </a>
++        <label class="archive-search">
++          <span>검색</span>
++          <input type="text" placeholder="제목, 설명, 태그 검색" data-archive-search>
++        </label>
++
++        <div class="archive-tags">
++          <div class="archive-tags-head">태그</div>
++          <div class="tag-filter-list">
++            <button type="button" class="tag-filter is-active" data-tag-filter="all">전체</button>
++            {% for tag_item in all_tags %}
++              {% unless tag_item == '' %}
++                {% assign pair = tag_item | split: '::' %}
++                <button type="button" class="tag-filter" data-tag-filter="{{ pair[0] }}">#{{ pair[1] }}</button>
++              {% endunless %}
+             {% endfor %}
++          </div>
+         </div>
+-        {% else %}
+-        <div class="empty-state">아직 게시된 글이 없습니다.</div>
+-        {% endif %}
++      </div>
++    </aside>
+ 
+-        <div class="back-home-wrap">
+-            <a href="{{ '/' | relative_url }}" class="back-to">← Home으로 돌아가기</a>
++    <div class="archive-content">
++      <div class="archive-summary">
++        <span><strong data-archive-count>{{ items | size }}</strong>개의 글</span>
++      </div>
++
++      {% if items.size > 0 %}
++        <div class="archive-list">
++          {% for item in items %}
++            {% capture search_text %}
++              {{ item.title }} {{ item.description }} {{ item.excerpt | strip_html }} {% for tag in item.tags %}{{ tag }} {% endfor %}
++            {% endcapture %}
++            {% capture tag_slugs %}{% for tag in item.tags %}{{ tag | slugify }}|{% endfor %}{% endcapture %}
++            <article class="archive-card" data-archive-card data-search="{{ search_text | strip | downcase | escape }}" data-tags="{{ tag_slugs | strip }}">
++              <a class="archive-card-link" href="{{ item.url | relative_url }}">
++                <div class="archive-card-meta">
++                  <span>{{ item.date | date: "%Y.%m.%d" }}</span>
++                  <span>글</span>
++                </div>
++                <h2>{{ item.title }}</h2>
++                <p>{{ item.description | default: item.excerpt | strip_html | truncatewords: 28 }}</p>
++                {% if item.tags and item.tags.size > 0 %}
++                  <div class="tag-list compact">
++                    {% for tag in item.tags %}
++                      <span class="tag-chip">#{{ tag }}</span>
++                    {% endfor %}
++                  </div>
++                {% endif %}
++              </a>
++            </article>
++          {% endfor %}
+         </div>
+-        
++        <div class="empty-panel" data-archive-empty hidden>조건에 맞는 글이 없습니다.</div>
++      {% else %}
++        <div class="empty-panel">아직 공개된 글이 없습니다.</div>
++      {% endif %}
+     </div>
++  </div>
+ </section>
+diff --git a/books.html b/books.html
+new file mode 100644
+index 0000000..59d84f4
+--- /dev/null
++++ b/books.html
+@@ -0,0 +1,77 @@
++---
++layout: default
++title: 책
++permalink: /books/
++section: books
++description: 읽은 책과 밑줄, 감상을 모아둔 아카이브
++---
++{% assign items = site.books | where_exp: "item", "item.placeholder != true" %}
++{% capture tag_pool %}{% for item in items %}{% for tag in item.tags %}{{ tag | slugify }}::{{ tag }}|{% endfor %}{% endfor %}{% endcapture %}
++{% assign all_tags = tag_pool | split: '|' | uniq | sort %}
++
++<section class="archive-page" data-archive-root>
++  <div class="archive-shell">
++    <aside class="archive-sidebar">
++      <div class="archive-sidebar-inner">
++        <p class="eyebrow">Archive</p>
++        <h1 class="archive-title">책</h1>
++        <p class="archive-description">책에서 오래 남은 문장, 생각, 감상을 모아둡니다.</p>
++
++        <label class="archive-search">
++          <span>검색</span>
++          <input type="text" placeholder="책 제목, 저자, 태그 검색" data-archive-search>
++        </label>
++
++        <div class="archive-tags">
++          <div class="archive-tags-head">태그</div>
++          <div class="tag-filter-list">
++            <button type="button" class="tag-filter is-active" data-tag-filter="all">전체</button>
++            {% for tag_item in all_tags %}
++              {% unless tag_item == '' %}
++                {% assign pair = tag_item | split: '::' %}
++                <button type="button" class="tag-filter" data-tag-filter="{{ pair[0] }}">#{{ pair[1] }}</button>
++              {% endunless %}
++            {% endfor %}
++          </div>
++        </div>
++      </div>
++    </aside>
++
++    <div class="archive-content">
++      <div class="archive-summary">
++        <span><strong data-archive-count>{{ items | size }}</strong>개의 기록</span>
++      </div>
++
++      {% if items.size > 0 %}
++        <div class="archive-list">
++          {% for item in items %}
++            {% capture search_text %}
++              {{ item.title }} {{ item.author }} {{ item.description }} {{ item.excerpt | strip_html }} {% for tag in item.tags %}{{ tag }} {% endfor %}
++            {% endcapture %}
++            {% capture tag_slugs %}{% for tag in item.tags %}{{ tag | slugify }}|{% endfor %}{% endcapture %}
++            <article class="archive-card" data-archive-card data-search="{{ search_text | strip | downcase | escape }}" data-tags="{{ tag_slugs | strip }}">
++              <a class="archive-card-link" href="{{ item.url | relative_url }}">
++                <div class="archive-card-meta">
++                  {% if item.author %}<span>{{ item.author }}</span>{% endif %}
++                  {% if item.date %}<span>{{ item.date | date: "%Y.%m.%d" }}</span>{% endif %}
++                </div>
++                <h2>{{ item.title }}</h2>
++                <p>{{ item.description | default: item.excerpt | strip_html | truncatewords: 28 }}</p>
++                {% if item.tags and item.tags.size > 0 %}
++                  <div class="tag-list compact">
++                    {% for tag in item.tags %}
++                      <span class="tag-chip">#{{ tag }}</span>
++                    {% endfor %}
++                  </div>
++                {% endif %}
++              </a>
++            </article>
++          {% endfor %}
++        </div>
++        <div class="empty-panel" data-archive-empty hidden>조건에 맞는 책 기록이 없습니다.</div>
++      {% else %}
++        <div class="empty-panel">아직 책 기록이 없습니다.</div>
++      {% endif %}
++    </div>
++  </div>
++</section>
+diff --git a/contact.html b/contact.html
+index 6e56a67..a02aa3e 100644
+--- a/contact.html
++++ b/contact.html
+@@ -1,90 +1,15 @@
+ ---
+ layout: default
+-title: Contact - 서낭
++title: 홈으로 이동
++section: home
+ permalink: /contact/
++description: 홈으로 이동합니다.
+ ---
+-
+-<section class="contact-page">
+-    <div class="section-inner contact-single">
+-        <p class="contact-kicker">CONTACT</p>
+-
+-        <h1 class="contact-title serif">서낭 문의하기</h1>
+-
+-        <p class="contact-lead">
+-            문의를 남겨주세요. 확인 후 회신드리겠습니다.
+-        </p>
+-
+-        <div class="contact-form-wrap">
+-            <form id="contact-form" class="contact-form">
+-                <div class="form-row">
+-                    <label for="name">Name*</label>
+-                    <input type="text" id="name" name="name" required>
+-                </div>
+-
+-                <div class="form-row">
+-                    <label for="contact">Contact(E-mail, Tel)*</label>
+-                    <input type="text" id="contact" name="contact" required>
+-                </div>
+-
+-                <div class="form-row">
+-                    <label for="message">Message*</label>
+-                    <textarea id="message" name="message" rows="8" required></textarea>
+-                </div>
+-
+-                <button type="submit">문의 남기기</button>
+-                <p id="form-status" class="form-status"></p>
+-            </form>
+-        </div>
+-    </div>
++<section class="entry-page">
++  <div class="entry-wrap">
++    <p class="eyebrow">Redirect</p>
++    <h1 class="entry-title">이 페이지는 현재 비워두었습니다.</h1>
++    <p class="entry-description">홈에서 글, 책, 영화 아카이브를 바로 볼 수 있게 구성했습니다.</p>
++    <a class="button-primary" href="{{ '/' | relative_url }}">홈으로 가기</a>
++  </div>
+ </section>
+-
+-<script>
+-document.addEventListener('DOMContentLoaded', function () {
+-    const form = document.getElementById('contact-form');
+-    const statusEl = document.getElementById('form-status');
+-    const submitBtn = form.querySelector('button[type="submit"]');
+-
+-    form.addEventListener('submit', async function (e) {
+-        e.preventDefault();
+-
+-        const payload = {
+-            name: form.name.value.trim(),
+-            contact: form.contact.value.trim(),
+-            message: form.message.value.trim()
+-        };
+-
+-        if (!payload.name || !payload.contact || !payload.message) {
+-            statusEl.textContent = '모든 항목을 입력해 주세요.';
+-            return;
+-        }
+-
+-        submitBtn.disabled = true;
+-        submitBtn.textContent = '전송 중...';
+-        statusEl.textContent = '';
+-
+-        try {
+-            const response = await fetch('https://seonang-contact-worker.ceo-21b.workers.dev', {
+-                method: 'POST',
+-                headers: {
+-                    'Content-Type': 'application/json'
+-                },
+-                body: JSON.stringify(payload)
+-            });
+-
+-            const result = await response.json();
+-
+-            if (!response.ok) {
+-                throw new Error(result.error || '전송 중 오류가 발생했습니다.');
+-            }
+-
+-            form.reset();
+-            statusEl.textContent = '문의가 정상적으로 접수되었습니다.';
+-        } catch (error) {
+-            statusEl.textContent = error.message || '전송 중 오류가 발생했습니다.';
+-        } finally {
+-            submitBtn.disabled = false;
+-            submitBtn.textContent = '문의 남기기';
+-        }
+-    });
+-});
+-</script>
+diff --git a/index.html b/index.html
+index 16d6643..eb215a5 100644
+--- a/index.html
++++ b/index.html
+@@ -1,153 +1,155 @@
+ ---
+ layout: default
+-title: 서낭 - Seonang
++title: 서낭
++section: home
++description: 서낭의 글과 감상을 담는 공간
+ ---
+-
+-<section id="about">
+-    <video autoplay muted loop playsinline preload="auto" class="bg-video">
+-        <source src="{{ '/assets/videos/bg-video.mp4' | relative_url }}" type="video/mp4">
+-    </video>
+-    <div class="video-overlay"></div>
+-
+-    <div class="hero-inner">
+-        <h2 class="hero-headline serif">경계에서 새로운 가치를 창출합니다.</h2>
+-
+-        <div class="definition-box">
+-            <h1>서낭</h1><span class="pos">[명사]</span>
+-            <ol>
+-                <li>마을 어귀를 지키며 액운을 막는 토속신</li>
+-                <li>세계와 세계의 경계</li>
+-            </ol>
+-        </div>
+-
+-        <p class="hero-subtext serif">
+-            새로운 초월적 관계의 탄생, 세계와 세계가 연결되는 모든 지점을 찾습니다.
+-        </p>
++{% assign visible_posts = site.posts | where_exp: "item", "item.placeholder != true" %}
++{% assign visible_books = site.books | where_exp: "item", "item.placeholder != true" %}
++{% assign visible_movies = site.movies | where_exp: "item", "item.placeholder != true" %}
++
++<section class="hero-section">
++  <div class="hero-inner">
++    <p class="eyebrow">Seonang</p>
++    <h1 class="hero-title">서낭</h1>
++    <p class="hero-copy">
++      경계, 존재, 비즈니스, 감상을 오래 붙잡고 쓰는 사람의 기록입니다.
++    </p>
++    <p class="hero-copy hero-copy-subtle">
++      이곳은 내가 쓴 글을 담는 공간입니다.
++    </p>
++
++    <div class="hero-actions">
++      <a class="button-primary" href="{{ '/blog/' | relative_url }}">글 보러가기</a>
++      <a class="button-secondary" href="{{ '/books/' | relative_url }}">책</a>
++      <a class="button-secondary" href="{{ '/movies/' | relative_url }}">영화</a>
+     </div>
++  </div>
+ </section>
+ 
+-<section id="portfolio">
+-    <div class="section-inner">
+-        <div class="section-heading">
+-            <div>
+-                <h2 class="section-title">
+-                    <a href="{{ '/portfolio/' | relative_url }}" class="section-title-link">Portfolio</a>
+-                </h2>
+-                <p class="section-desc">서낭이 개척하고 연결해온 주요 포트폴리오입니다.</p>
+-            </div>
+-            <a href="{{ '/portfolio' | relative_url }}" class="section-more">View all</a>
+-        </div>
++<section class="home-section-block">
++  <div class="section-shell">
++    <div class="section-heading">
++      <div>
++        <p class="section-kicker">Archive</p>
++        <h2 class="section-title">세 개의 축</h2>
++      </div>
++      <p class="section-description">글, 책, 영화로 나눠 천천히 읽기 좋은 구조로 정리합니다.</p>
++    </div>
+ 
+-        <div class="carousel-wrapper">
+-            <button class="carousel-btn prev" type="button" onclick="movePortfolioCarousel(-1)">&#10094;</button>
++    <div class="home-grid home-grid-three">
++      <a class="overview-card" href="{{ '/blog/' | relative_url }}">
++        <span class="overview-card-label">01</span>
++        <h3>글 모음</h3>
++        <p>일상 관찰, 존재에 대한 생각, 비즈니스 메모를 담습니다.</p>
++        <strong>{{ visible_posts | size }}개의 글</strong>
++      </a>
++
++      <a class="overview-card" href="{{ '/books/' | relative_url }}">
++        <span class="overview-card-label">02</span>
++        <h3>책</h3>
++        <p>읽은 책에서 오래 남은 문장과 감상을 정리합니다.</p>
++        <strong>{{ visible_books | size }}개의 기록</strong>
++      </a>
++
++      <a class="overview-card" href="{{ '/movies/' | relative_url }}">
++        <span class="overview-card-label">03</span>
++        <h3>영화</h3>
++        <p>영화에서 붙잡힌 장면, 대사, 인상을 기록합니다.</p>
++        <strong>{{ visible_movies | size }}개의 기록</strong>
++      </a>
++    </div>
++  </div>
++</section>
+ 
+-            <div class="carousel-track portfolio-track" id="portfolioTrack">
+-                {% assign sorted_portfolio = site.portfolio | sort: "date" | reverse %}
+-                {% for item in sorted_portfolio %}
+-                <article class="portfolio-card carousel-portfolio-card" onclick="location.href='{{ item.url | relative_url }}'">
+-                    {% if item.thumbnail %}
+-                    <div class="portfolio-thumb">
+-                        <img src="{{ item.thumbnail | relative_url }}" alt="{{ item.title }}">
+-                    </div>
+-                    {% endif %}
+-                    <div class="portfolio-body">
+-                        <div class="card-date">{{ item.date | date: "%Y. %m. %d." }}</div>
+-                        <h3 class="serif">{{ item.title }}</h3>
+-                        <p>{{ item.excerpt }}</p>
+-                    </div>
+-                </article>
+-                {% endfor %}
++<section class="home-section-block home-section-alt">
++  <div class="section-shell">
++    <div class="section-heading">
++      <div>
++        <p class="section-kicker">Latest</p>
++        <h2 class="section-title">최근 올라온 글</h2>
++      </div>
++      <a class="section-link" href="{{ '/blog/' | relative_url }}">전체 보기</a>
++    </div>
+ 
+-                {% if site.portfolio.size == 0 %}
+-                <div class="portfolio-card carousel-portfolio-card" onclick="location.href='{{ '/portfolio' | relative_url }}'">
+-                    <div class="portfolio-body">
+-                        <div class="card-date">준비 중</div>
+-                        <h3 class="serif">포트폴리오가 곧 채워집니다</h3>
+-                        <p>아직 게시된 글이 없습니다. 첫 글이 등록되면 이곳에 자동으로 표시됩니다.</p>
+-                    </div>
+-                </div>
+-                {% endif %}
++    {% if visible_posts.size > 0 %}
++      <div class="home-list">
++        {% for post in visible_posts limit: 6 %}
++          <a class="list-card" href="{{ post.url | relative_url }}">
++            <div class="list-card-meta">
++              <span>{{ post.date | date: "%Y.%m.%d" }}</span>
++              <span>글</span>
+             </div>
++            <h3>{{ post.title }}</h3>
++            <p>{{ post.description | default: post.excerpt | strip_html | truncatewords: 24 }}</p>
++            {% if post.tags and post.tags.size > 0 %}
++              <div class="tag-list compact">
++                {% for tag in post.tags limit: 4 %}
++                  <span class="tag-chip">#{{ tag }}</span>
++                {% endfor %}
++              </div>
++            {% endif %}
++          </a>
++        {% endfor %}
++      </div>
++    {% else %}
++      <div class="empty-panel">아직 공개된 글이 없습니다. 첫 글을 올리면 이곳부터 채워집니다.</div>
++    {% endif %}
++  </div>
++</section>
+ 
+-            <button class="carousel-btn next" type="button" onclick="movePortfolioCarousel(1)">&#10095;</button>
++<section class="home-section-block">
++  <div class="section-shell home-dual-grid">
++    <div>
++      <div class="section-heading stacked">
++        <div>
++          <p class="section-kicker">Books</p>
++          <h2 class="section-title">책</h2>
+         </div>
++        <a class="section-link" href="{{ '/books/' | relative_url }}">전체 보기</a>
++      </div>
++
++      {% if visible_books.size > 0 %}
++        <div class="mini-list">
++          {% for item in visible_books limit: 4 %}
++            <a class="mini-list-item" href="{{ item.url | relative_url }}">
++              <div>
++                <strong>{{ item.title }}</strong>
++                {% if item.author %}<span>{{ item.author }}</span>{% endif %}
++              </div>
++              {% if item.date %}<time>{{ item.date | date: "%Y.%m.%d" }}</time>{% endif %}
++            </a>
++          {% endfor %}
++        </div>
++      {% else %}
++        <div class="empty-panel small">아직 책 기록이 없습니다.</div>
++      {% endif %}
+     </div>
+-</section>
+ 
+-<section id="blog">
+-    <div class="section-inner">
+-        <div class="section-heading">
+-            <div>
+-                <h2 class="section-title">
+-                    <a href="{{ '/blog/' | relative_url }}" class="section-title-link">Blog</a>
+-                </h2>
+-                <p class="section-desc">서낭의 생각과 기록, 진행 중인 실험들을 기록합니다.</p>
+-            </div>
+-            <a href="{{ '/blog' | relative_url }}" class="section-more">View all</a>
++    <div>
++      <div class="section-heading stacked">
++        <div>
++          <p class="section-kicker">Movies</p>
++          <h2 class="section-title">영화</h2>
+         </div>
+-
+-        <div class="carousel-wrapper">
+-            <button class="carousel-btn prev" type="button" onclick="moveCarousel(-1)">&#10094;</button>
+-
+-            <div class="carousel-track" id="carouselTrack">
+-                {% for post in site.posts %}
+-                <div class="carousel-card" onclick="location.href='{{ post.url | relative_url }}'">
+-                    <div>
+-                        <div class="card-date">{{ post.date | date: "%Y. %m. %d." }}</div>
+-                        <h4 class="card-title serif">{{ post.title }}</h4>
+-                    </div>
+-                    <p class="card-excerpt">{{ post.excerpt | strip_html | truncatewords: 15 }}</p>
+-                </div>
+-                {% endfor %}
+-
+-                {% if site.posts.size == 0 %}
+-                <div class="carousel-card" onclick="location.href='{{ '/blog' | relative_url }}'">
+-                    <div>
+-                        <div class="card-date">준비 중</div>
+-                        <h4 class="card-title serif">블로그가 곧 채워집니다</h4>
+-                    </div>
+-                    <p class="card-excerpt">아직 게시된 글이 없습니다. 첫 글이 등록되면 이곳에 자동으로 표시됩니다.</p>
+-                </div>
+-                {% endif %}
+-            </div>
+-
+-            <button class="carousel-btn next" type="button" onclick="moveCarousel(1)">&#10095;</button>
++        <a class="section-link" href="{{ '/movies/' | relative_url }}">전체 보기</a>
++      </div>
++
++      {% if visible_movies.size > 0 %}
++        <div class="mini-list">
++          {% for item in visible_movies limit: 4 %}
++            <a class="mini-list-item" href="{{ item.url | relative_url }}">
++              <div>
++                <strong>{{ item.title }}</strong>
++                {% if item.director %}<span>{{ item.director }}</span>{% endif %}
++              </div>
++              {% if item.date %}<time>{{ item.date | date: "%Y.%m.%d" }}</time>{% endif %}
++            </a>
++          {% endfor %}
+         </div>
++      {% else %}
++        <div class="empty-panel small">아직 영화 기록이 없습니다.</div>
++      {% endif %}
+     </div>
++  </div>
+ </section>
+-
+-<script>
+-function moveCarousel(direction) {
+-    const track = document.getElementById('carouselTrack');
+-    if (!track) return;
+-
+-    const card = track.querySelector('.carousel-card');
+-    if (!card) return;
+-
+-    const style = window.getComputedStyle(track);
+-    const gap = parseInt(style.columnGap || style.gap || 20, 10) || 20;
+-    const scrollAmount = card.offsetWidth + gap;
+-
+-    track.scrollBy({
+-        left: direction * scrollAmount,
+-        behavior: 'smooth'
+-    });
+-}
+-
+-function movePortfolioCarousel(direction) {
+-    const track = document.getElementById('portfolioTrack');
+-    if (!track) return;
+-
+-    const card = track.querySelector('.carousel-portfolio-card');
+-    if (!card) return;
+-
+-    const style = window.getComputedStyle(track);
+-    const gap = parseInt(style.columnGap || style.gap || 20, 10) || 20;
+-    const scrollAmount = card.offsetWidth + gap;
+-
+-    track.scrollBy({
+-        left: direction * scrollAmount,
+-        behavior: 'smooth'
+-    });
+-}
+-</script>
+diff --git a/movies.html b/movies.html
+new file mode 100644
+index 0000000..9bc7bab
+--- /dev/null
++++ b/movies.html
+@@ -0,0 +1,77 @@
++---
++layout: default
++title: 영화
++permalink: /movies/
++section: movies
++description: 영화 메모와 감상을 모아둔 아카이브
++---
++{% assign items = site.movies | where_exp: "item", "item.placeholder != true" %}
++{% capture tag_pool %}{% for item in items %}{% for tag in item.tags %}{{ tag | slugify }}::{{ tag }}|{% endfor %}{% endfor %}{% endcapture %}
++{% assign all_tags = tag_pool | split: '|' | uniq | sort %}
++
++<section class="archive-page" data-archive-root>
++  <div class="archive-shell">
++    <aside class="archive-sidebar">
++      <div class="archive-sidebar-inner">
++        <p class="eyebrow">Archive</p>
++        <h1 class="archive-title">영화</h1>
++        <p class="archive-description">장면, 대사, 여운이 남은 영화를 모아봅니다.</p>
++
++        <label class="archive-search">
++          <span>검색</span>
++          <input type="text" placeholder="영화 제목, 감독, 태그 검색" data-archive-search>
++        </label>
++
++        <div class="archive-tags">
++          <div class="archive-tags-head">태그</div>
++          <div class="tag-filter-list">
++            <button type="button" class="tag-filter is-active" data-tag-filter="all">전체</button>
++            {% for tag_item in all_tags %}
++              {% unless tag_item == '' %}
++                {% assign pair = tag_item | split: '::' %}
++                <button type="button" class="tag-filter" data-tag-filter="{{ pair[0] }}">#{{ pair[1] }}</button>
++              {% endunless %}
++            {% endfor %}
++          </div>
++        </div>
++      </div>
++    </aside>
++
++    <div class="archive-content">
++      <div class="archive-summary">
++        <span><strong data-archive-count>{{ items | size }}</strong>개의 기록</span>
++      </div>
++
++      {% if items.size > 0 %}
++        <div class="archive-list">
++          {% for item in items %}
++            {% capture search_text %}
++              {{ item.title }} {{ item.director }} {{ item.description }} {{ item.excerpt | strip_html }} {% for tag in item.tags %}{{ tag }} {% endfor %}
++            {% endcapture %}
++            {% capture tag_slugs %}{% for tag in item.tags %}{{ tag | slugify }}|{% endfor %}{% endcapture %}
++            <article class="archive-card" data-archive-card data-search="{{ search_text | strip | downcase | escape }}" data-tags="{{ tag_slugs | strip }}">
++              <a class="archive-card-link" href="{{ item.url | relative_url }}">
++                <div class="archive-card-meta">
++                  {% if item.director %}<span>{{ item.director }}</span>{% endif %}
++                  {% if item.date %}<span>{{ item.date | date: "%Y.%m.%d" }}</span>{% endif %}
++                </div>
++                <h2>{{ item.title }}</h2>
++                <p>{{ item.description | default: item.excerpt | strip_html | truncatewords: 28 }}</p>
++                {% if item.tags and item.tags.size > 0 %}
++                  <div class="tag-list compact">
++                    {% for tag in item.tags %}
++                      <span class="tag-chip">#{{ tag }}</span>
++                    {% endfor %}
++                  </div>
++                {% endif %}
++              </a>
++            </article>
++          {% endfor %}
++        </div>
++        <div class="empty-panel" data-archive-empty hidden>조건에 맞는 영화 기록이 없습니다.</div>
++      {% else %}
++        <div class="empty-panel">아직 영화 기록이 없습니다.</div>
++      {% endif %}
++    </div>
++  </div>
++</section>
+diff --git a/portfolio.html b/portfolio.html
+index e2395aa..1a6d3f4 100644
+--- a/portfolio.html
++++ b/portfolio.html
+@@ -1,41 +1,15 @@
+ ---
+ layout: default
+-title: Portfolio - 서낭
++title: 글 모음으로 이동
++section: blog
+ permalink: /portfolio/
++description: 글 모음으로 이동합니다.
+ ---
+-
+-<section class="blog-page portfolio-list-page">
+-    <div class="page-inner">
+-        <header class="page-header">
+-            <h1 class="page-title">Portfolio</h1>
+-            <p class="page-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
+-        </header>
+-
+-        {% assign sorted_portfolio = site.portfolio | sort: "date" | reverse %}
+-        {% if sorted_portfolio.size > 0 %}
+-        <div class="portfolio-grid portfolio-list-grid">
+-            {% for item in sorted_portfolio %}
+-            <article class="portfolio-card portfolio-list-card" onclick="location.href='{{ item.url | relative_url }}'">
+-                {% if item.thumbnail %}
+-                <div class="portfolio-thumb">
+-                    <img src="{{ item.thumbnail | relative_url }}" alt="{{ item.title }}">
+-                </div>
+-                {% endif %}
+-                <div class="portfolio-body">
+-                    <div class="card-date">{{ item.date | date: "%Y. %m. %d." }}</div>
+-                    <h3 class="serif">{{ item.title }}</h3>
+-                    <p>{{ item.excerpt }}</p>
+-                </div>
+-            </article>
+-            {% endfor %}
+-        </div>
+-        {% else %}
+-        <div class="empty-state">아직 등록된 포트폴리오가 없습니다.</div>
+-        {% endif %}
+-
+-        <div class="back-home-wrap">
+-            <a href="{{ '/' | relative_url }}" class="back-to">← Home으로 돌아가기</a>
+-        </div>
+-        
+-    </div>
++<section class="entry-page">
++  <div class="entry-wrap">
++    <p class="eyebrow">Redirect</p>
++    <h1 class="entry-title">이 페이지는 더 이상 사용하지 않습니다.</h1>
++    <p class="entry-description">현재 구조는 글 모음, 책, 영화 세 섹션으로 정리되어 있습니다.</p>
++    <a class="button-primary" href="{{ '/blog/' | relative_url }}">글 모음으로 가기</a>
++  </div>
+ </section>
+-- 
+2.39.5
+
