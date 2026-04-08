@@ -1,5 +1,16 @@
 <header class="site-header">
   <div class="site-header-inner">
-    <a href="{{ '/' | relative_url }}" class="site-brand">서낭 <span>(Seonang)</span></a>
+    <a href="{{ '/' | relative_url }}" class="site-brand">서낭<span></span></a>
+
+    <form class="header-search" action="{{ '/search/' | relative_url }}" method="get">
+      <input
+        type="text"
+        name="q"
+        value="{{ page.search_query | default: '' }}"
+        placeholder="Search..."
+        data-archive-search
+      >
+    </form>
   </div>
 </header>
+
