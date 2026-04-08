@@ -1,12 +1,10 @@
 {% assign visible_posts = site.posts | where_exp: "item", "item.placeholder != true" %}
 {% assign all_items = visible_posts | sort: 'date' | reverse %}
-
 {% assign management_count = visible_posts | where: 'archive_category', 'management' | size %}
 {% assign philosophy_count = visible_posts | where: 'archive_category', 'philosophy' | size %}
 {% assign book_count = visible_posts | where: 'archive_category', 'book' | size %}
 {% assign movie_count = visible_posts | where: 'archive_category', 'movie' | size %}
 {% assign diary_count = visible_posts.size | minus: management_count | minus: philosophy_count | minus: book_count | minus: movie_count %}
-
 {% capture tag_pool %}{% for item in all_items %}{% for tag in item.tags %}{{ tag | slugify }}::{{ tag }}|{% endfor %}{% endfor %}{% endcapture %}
 {% assign all_tags = tag_pool | split: '|' | uniq | sort %}
 
@@ -39,23 +37,41 @@
               {% assign category_label = '일기' %}
             {% endif %}
 
+            {% assign preview_image = item.preview_image | default: '' %}
+            {% if preview_image == '' %}
+              {% assign rendered_content = item.content | markdownify %}
+              {% assign img_parts = rendered_content | split: '<img ' %}
+              {% if img_parts.size > 1 %}
+                {% assign first_img_chunk = img_parts[1] %}
+                {% assign src_parts = first_img_chunk | split: 'src="' %}
+                {% if src_parts.size > 1 %}
+                  {% assign preview_image = src_parts[1] | split: '"' | first %}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+
             {% capture search_text %}{{ item.title }} {{ item.description }} {{ item.author }} {{ item.director }} {{ item.excerpt | strip_html }} {% for tag in item.tags %}{{ tag }} {% endfor %}{% endcapture %}
             {% capture tag_slugs %}{% for tag in item.tags %}{{ tag | slugify }}|{% endfor %}{% endcapture %}
-            
-            <article class="archive-row" data-archive-card data-category="{{ category_key }}" data-search="{{ search_text | strip | downcase | escape }}" data-tags="{{ tag_slugs | strip }}">
+
+            <article class="archive-row{% if preview_image != '' %} has-thumb{% else %} no-thumb{% endif %}" data-archive-card data-category="{{ category_key }}" data-search="{{ search_text | strip | downcase | escape }}" data-tags="{{ tag_slugs | strip }}">
               <a class="archive-row-link" href="{{ item.url | relative_url }}">
-                <div class="archive-row-thumb archive-row-thumb-placeholder">{{ category_label }}</div>
                 <div class="archive-row-body">
-                  <div class="archive-row-category">{{ category_label }}</div>
+                                    <div class="archive-row-category">{{ category_label }}</div>
                   <h2>{{ item.title }}</h2>
                   <p>{{ item.description | default: item.excerpt | strip_html | truncatewords: 34 }}</p>
                   <div class="archive-row-meta">
                     <span>{{ item.date | date: "%Y.%m.%d" }}</span>
                     {% if item.tags and item.tags.size > 0 %}
-                      <span>{% for tag in item.tags limit: 3 %}#{{ tag }}{% unless forloop.last %} / {% endunless %}{% endfor %}</span>
+                      <span class="archive-row-tags">{% for tag in item.tags limit: 3 %}#{{ tag }}{% unless forloop.last %}, {% endunless %}{% endfor %}</span>
                     {% endif %}
                   </div>
                 </div>
+
+                {% if preview_image != '' %}
+                  <div class="archive-row-thumb">
+                    <img src="{{ preview_image | relative_url }}" alt="{{ item.title }}">
+                  </div>
+                {% endif %}
               </a>
             </article>
           {% endfor %}
@@ -99,6 +115,5 @@
         </div>
       </div>
     </aside>
-
   </div>
 </section>
