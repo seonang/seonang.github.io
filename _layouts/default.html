@@ -130,7 +130,7 @@
       }
 
       document.querySelectorAll('[data-archive-root]').forEach(function (root) {
-        const searchInput = root.querySelector('[data-archive-search]');
+        const searchInput = document.querySelector('[data-archive-search]');
         const countNode = root.querySelector('[data-archive-count]');
         const emptyNode = root.querySelector('[data-archive-empty]');
         const cards = Array.from(root.querySelectorAll('[data-archive-card]'));
