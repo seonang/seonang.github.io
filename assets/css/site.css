@@ -432,4 +432,10 @@ img { max-width: 100%; display: block; }
   .chat-modal-dialog,
   .dark-button,
   .light-button { width: 100%; }
+  .header-search {
+  width: 100%;
+  }
+.site-header-inner {
+  align-items: stretch;
+  }
 }
