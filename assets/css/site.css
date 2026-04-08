@@ -378,7 +378,7 @@ img { max-width: 100%; display: block; }
 }
 .chat-modal-dialog {
   position: relative;
-  width: min(560px, calc(100% - 32px));
+  width: min(450px, calc(100% - 32px));
   margin: 52px auto;
   padding: 28px;
   background: #fff;
