@@ -1,9 +1,42 @@
 title: "서낭"
-description: "세계와 세계의 연결, 경계"
+description: "서낭의 글과 감상을 담는 공간"
 url: "https://seonang.kr"
 baseurl: ""
+timezone: "Asia/Seoul"
+lang: "ko"
+markdown: kramdown
 permalink: /blog/:year/:month/:day/:title/
+
 collections:
-  portfolio:
+  books:
     output: true
-    permalink: /portfolio/:name/
+    permalink: /books/:name/
+  movies:
+    output: true
+    permalink: /movies/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: entry
+      section: blog
+      section_label: "글 모음"
+      section_url: "/blog/"
+  - scope:
+      path: ""
+      type: "books"
+    values:
+      layout: entry
+      section: books
+      section_label: "책"
+      section_url: "/books/"
+  - scope:
+      path: ""
+      type: "movies"
+    values:
+      layout: entry
+      section: movies
+      section_label: "영화"
+      section_url: "/movies/"

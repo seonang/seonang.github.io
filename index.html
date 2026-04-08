@@ -1,153 +1,155 @@
 ---
 layout: default
-title: 서낭 - Seonang
+title: 서낭
+section: home
+description: 서낭의 글과 감상을 담는 공간
 ---
+{% assign visible_posts = site.posts | where_exp: "item", "item.placeholder != true" %}
+{% assign visible_books = site.books | where_exp: "item", "item.placeholder != true" %}
+{% assign visible_movies = site.movies | where_exp: "item", "item.placeholder != true" %}
 
-<section id="about">
-    <video autoplay muted loop playsinline preload="auto" class="bg-video">
-        <source src="{{ '/assets/videos/bg-video.mp4' | relative_url }}" type="video/mp4">
-    </video>
-    <div class="video-overlay"></div>
+<section class="hero-section">
+  <div class="hero-inner">
+    <p class="eyebrow">Seonang</p>
+    <h1 class="hero-title">서낭</h1>
+    <p class="hero-copy">
+      경계, 존재, 비즈니스, 감상을 오래 붙잡고 쓰는 사람의 기록입니다.
+    </p>
+    <p class="hero-copy hero-copy-subtle">
+      이곳은 내가 쓴 글을 담는 공간입니다.
+    </p>
 
-    <div class="hero-inner">
-        <h2 class="hero-headline serif">경계에서 새로운 가치를 창출합니다.</h2>
-
-        <div class="definition-box">
-            <h1>서낭</h1><span class="pos">[명사]</span>
-            <ol>
-                <li>마을 어귀를 지키며 액운을 막는 토속신</li>
-                <li>세계와 세계의 경계</li>
-            </ol>
-        </div>
-
-        <p class="hero-subtext serif">
-            새로운 초월적 관계의 탄생, 세계와 세계가 연결되는 모든 지점을 찾습니다.
-        </p>
+    <div class="hero-actions">
+      <a class="button-primary" href="{{ '/blog/' | relative_url }}">글 보러가기</a>
+      <a class="button-secondary" href="{{ '/books/' | relative_url }}">책</a>
+      <a class="button-secondary" href="{{ '/movies/' | relative_url }}">영화</a>
     </div>
+  </div>
 </section>
 
-<section id="portfolio">
-    <div class="section-inner">
-        <div class="section-heading">
-            <div>
-                <h2 class="section-title">
-                    <a href="{{ '/portfolio/' | relative_url }}" class="section-title-link">Portfolio</a>
-                </h2>
-                <p class="section-desc">서낭이 개척하고 연결해온 주요 포트폴리오입니다.</p>
+<section class="home-section-block">
+  <div class="section-shell">
+    <div class="section-heading">
+      <div>
+        <p class="section-kicker">Archive</p>
+        <h2 class="section-title">세 개의 축</h2>
+      </div>
+      <p class="section-description">글, 책, 영화로 나눠 천천히 읽기 좋은 구조로 정리합니다.</p>
+    </div>
+
+    <div class="home-grid home-grid-three">
+      <a class="overview-card" href="{{ '/blog/' | relative_url }}">
+        <span class="overview-card-label">01</span>
+        <h3>글 모음</h3>
+        <p>일상 관찰, 존재에 대한 생각, 비즈니스 메모를 담습니다.</p>
+        <strong>{{ visible_posts | size }}개의 글</strong>
+      </a>
+
+      <a class="overview-card" href="{{ '/books/' | relative_url }}">
+        <span class="overview-card-label">02</span>
+        <h3>책</h3>
+        <p>읽은 책에서 오래 남은 문장과 감상을 정리합니다.</p>
+        <strong>{{ visible_books | size }}개의 기록</strong>
+      </a>
+
+      <a class="overview-card" href="{{ '/movies/' | relative_url }}">
+        <span class="overview-card-label">03</span>
+        <h3>영화</h3>
+        <p>영화에서 붙잡힌 장면, 대사, 인상을 기록합니다.</p>
+        <strong>{{ visible_movies | size }}개의 기록</strong>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="home-section-block home-section-alt">
+  <div class="section-shell">
+    <div class="section-heading">
+      <div>
+        <p class="section-kicker">Latest</p>
+        <h2 class="section-title">최근 올라온 글</h2>
+      </div>
+      <a class="section-link" href="{{ '/blog/' | relative_url }}">전체 보기</a>
+    </div>
+
+    {% if visible_posts.size > 0 %}
+      <div class="home-list">
+        {% for post in visible_posts limit: 6 %}
+          <a class="list-card" href="{{ post.url | relative_url }}">
+            <div class="list-card-meta">
+              <span>{{ post.date | date: "%Y.%m.%d" }}</span>
+              <span>글</span>
             </div>
-            <a href="{{ '/portfolio' | relative_url }}" class="section-more">View all</a>
-        </div>
-
-        <div class="carousel-wrapper">
-            <button class="carousel-btn prev" type="button" onclick="movePortfolioCarousel(-1)">&#10094;</button>
-
-            <div class="carousel-track portfolio-track" id="portfolioTrack">
-                {% assign sorted_portfolio = site.portfolio | sort: "date" | reverse %}
-                {% for item in sorted_portfolio %}
-                <article class="portfolio-card carousel-portfolio-card" onclick="location.href='{{ item.url | relative_url }}'">
-                    {% if item.thumbnail %}
-                    <div class="portfolio-thumb">
-                        <img src="{{ item.thumbnail | relative_url }}" alt="{{ item.title }}">
-                    </div>
-                    {% endif %}
-                    <div class="portfolio-body">
-                        <div class="card-date">{{ item.date | date: "%Y. %m. %d." }}</div>
-                        <h3 class="serif">{{ item.title }}</h3>
-                        <p>{{ item.excerpt }}</p>
-                    </div>
-                </article>
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.description | default: post.excerpt | strip_html | truncatewords: 24 }}</p>
+            {% if post.tags and post.tags.size > 0 %}
+              <div class="tag-list compact">
+                {% for tag in post.tags limit: 4 %}
+                  <span class="tag-chip">#{{ tag }}</span>
                 {% endfor %}
-
-                {% if site.portfolio.size == 0 %}
-                <div class="portfolio-card carousel-portfolio-card" onclick="location.href='{{ '/portfolio' | relative_url }}'">
-                    <div class="portfolio-body">
-                        <div class="card-date">준비 중</div>
-                        <h3 class="serif">포트폴리오가 곧 채워집니다</h3>
-                        <p>아직 게시된 글이 없습니다. 첫 글이 등록되면 이곳에 자동으로 표시됩니다.</p>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-
-            <button class="carousel-btn next" type="button" onclick="movePortfolioCarousel(1)">&#10095;</button>
-        </div>
-    </div>
+              </div>
+            {% endif %}
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-panel">아직 공개된 글이 없습니다. 첫 글을 올리면 이곳부터 채워집니다.</div>
+    {% endif %}
+  </div>
 </section>
 
-<section id="blog">
-    <div class="section-inner">
-        <div class="section-heading">
-            <div>
-                <h2 class="section-title">
-                    <a href="{{ '/blog/' | relative_url }}" class="section-title-link">Blog</a>
-                </h2>
-                <p class="section-desc">서낭의 생각과 기록, 진행 중인 실험들을 기록합니다.</p>
-            </div>
-            <a href="{{ '/blog' | relative_url }}" class="section-more">View all</a>
+<section class="home-section-block">
+  <div class="section-shell home-dual-grid">
+    <div>
+      <div class="section-heading stacked">
+        <div>
+          <p class="section-kicker">Books</p>
+          <h2 class="section-title">책</h2>
         </div>
+        <a class="section-link" href="{{ '/books/' | relative_url }}">전체 보기</a>
+      </div>
 
-        <div class="carousel-wrapper">
-            <button class="carousel-btn prev" type="button" onclick="moveCarousel(-1)">&#10094;</button>
-
-            <div class="carousel-track" id="carouselTrack">
-                {% for post in site.posts %}
-                <div class="carousel-card" onclick="location.href='{{ post.url | relative_url }}'">
-                    <div>
-                        <div class="card-date">{{ post.date | date: "%Y. %m. %d." }}</div>
-                        <h4 class="card-title serif">{{ post.title }}</h4>
-                    </div>
-                    <p class="card-excerpt">{{ post.excerpt | strip_html | truncatewords: 15 }}</p>
-                </div>
-                {% endfor %}
-
-                {% if site.posts.size == 0 %}
-                <div class="carousel-card" onclick="location.href='{{ '/blog' | relative_url }}'">
-                    <div>
-                        <div class="card-date">준비 중</div>
-                        <h4 class="card-title serif">블로그가 곧 채워집니다</h4>
-                    </div>
-                    <p class="card-excerpt">아직 게시된 글이 없습니다. 첫 글이 등록되면 이곳에 자동으로 표시됩니다.</p>
-                </div>
-                {% endif %}
-            </div>
-
-            <button class="carousel-btn next" type="button" onclick="moveCarousel(1)">&#10095;</button>
+      {% if visible_books.size > 0 %}
+        <div class="mini-list">
+          {% for item in visible_books limit: 4 %}
+            <a class="mini-list-item" href="{{ item.url | relative_url }}">
+              <div>
+                <strong>{{ item.title }}</strong>
+                {% if item.author %}<span>{{ item.author }}</span>{% endif %}
+              </div>
+              {% if item.date %}<time>{{ item.date | date: "%Y.%m.%d" }}</time>{% endif %}
+            </a>
+          {% endfor %}
         </div>
+      {% else %}
+        <div class="empty-panel small">아직 책 기록이 없습니다.</div>
+      {% endif %}
     </div>
+
+    <div>
+      <div class="section-heading stacked">
+        <div>
+          <p class="section-kicker">Movies</p>
+          <h2 class="section-title">영화</h2>
+        </div>
+        <a class="section-link" href="{{ '/movies/' | relative_url }}">전체 보기</a>
+      </div>
+
+      {% if visible_movies.size > 0 %}
+        <div class="mini-list">
+          {% for item in visible_movies limit: 4 %}
+            <a class="mini-list-item" href="{{ item.url | relative_url }}">
+              <div>
+                <strong>{{ item.title }}</strong>
+                {% if item.director %}<span>{{ item.director }}</span>{% endif %}
+              </div>
+              {% if item.date %}<time>{{ item.date | date: "%Y.%m.%d" }}</time>{% endif %}
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-panel small">아직 영화 기록이 없습니다.</div>
+      {% endif %}
+    </div>
+  </div>
 </section>
-
-<script>
-function moveCarousel(direction) {
-    const track = document.getElementById('carouselTrack');
-    if (!track) return;
-
-    const card = track.querySelector('.carousel-card');
-    if (!card) return;
-
-    const style = window.getComputedStyle(track);
-    const gap = parseInt(style.columnGap || style.gap || 20, 10) || 20;
-    const scrollAmount = card.offsetWidth + gap;
-
-    track.scrollBy({
-        left: direction * scrollAmount,
-        behavior: 'smooth'
-    });
-}
-
-function movePortfolioCarousel(direction) {
-    const track = document.getElementById('portfolioTrack');
-    if (!track) return;
-
-    const card = track.querySelector('.carousel-portfolio-card');
-    if (!card) return;
-
-    const style = window.getComputedStyle(track);
-    const gap = parseInt(style.columnGap || style.gap || 20, 10) || 20;
-    const scrollAmount = card.offsetWidth + gap;
-
-    track.scrollBy({
-        left: direction * scrollAmount,
-        behavior: 'smooth'
-    });
-}
-</script>

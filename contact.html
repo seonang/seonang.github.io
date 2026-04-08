@@ -1,90 +1,15 @@
 ---
 layout: default
-title: Contact - 서낭
+title: 홈으로 이동
+section: home
 permalink: /contact/
+description: 홈으로 이동합니다.
 ---
-
-<section class="contact-page">
-    <div class="section-inner contact-single">
-        <p class="contact-kicker">CONTACT</p>
-
-        <h1 class="contact-title serif">서낭 문의하기</h1>
-
-        <p class="contact-lead">
-            문의를 남겨주세요. 확인 후 회신드리겠습니다.
-        </p>
-
-        <div class="contact-form-wrap">
-            <form id="contact-form" class="contact-form">
-                <div class="form-row">
-                    <label for="name">Name*</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-
-                <div class="form-row">
-                    <label for="contact">Contact(E-mail, Tel)*</label>
-                    <input type="text" id="contact" name="contact" required>
-                </div>
-
-                <div class="form-row">
-                    <label for="message">Message*</label>
-                    <textarea id="message" name="message" rows="8" required></textarea>
-                </div>
-
-                <button type="submit">문의 남기기</button>
-                <p id="form-status" class="form-status"></p>
-            </form>
-        </div>
-    </div>
+<section class="entry-page">
+  <div class="entry-wrap">
+    <p class="eyebrow">Redirect</p>
+    <h1 class="entry-title">이 페이지는 현재 비워두었습니다.</h1>
+    <p class="entry-description">홈에서 글, 책, 영화 아카이브를 바로 볼 수 있게 구성했습니다.</p>
+    <a class="button-primary" href="{{ '/' | relative_url }}">홈으로 가기</a>
+  </div>
 </section>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('contact-form');
-    const statusEl = document.getElementById('form-status');
-    const submitBtn = form.querySelector('button[type="submit"]');
-
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const payload = {
-            name: form.name.value.trim(),
-            contact: form.contact.value.trim(),
-            message: form.message.value.trim()
-        };
-
-        if (!payload.name || !payload.contact || !payload.message) {
-            statusEl.textContent = '모든 항목을 입력해 주세요.';
-            return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = '전송 중...';
-        statusEl.textContent = '';
-
-        try {
-            const response = await fetch('https://seonang-contact-worker.ceo-21b.workers.dev', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || '전송 중 오류가 발생했습니다.');
-            }
-
-            form.reset();
-            statusEl.textContent = '문의가 정상적으로 접수되었습니다.';
-        } catch (error) {
-            statusEl.textContent = error.message || '전송 중 오류가 발생했습니다.';
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = '문의 남기기';
-        }
-    });
-});
-</script>

@@ -1,41 +1,15 @@
 ---
 layout: default
-title: Portfolio - 서낭
+title: 글 모음으로 이동
+section: blog
 permalink: /portfolio/
+description: 글 모음으로 이동합니다.
 ---
-
-<section class="blog-page portfolio-list-page">
-    <div class="page-inner">
-        <header class="page-header">
-            <h1 class="page-title">Portfolio</h1>
-            <p class="page-desc">서낭의 철학과 비즈니스 기록을 보관합니다.</p>
-        </header>
-
-        {% assign sorted_portfolio = site.portfolio | sort: "date" | reverse %}
-        {% if sorted_portfolio.size > 0 %}
-        <div class="portfolio-grid portfolio-list-grid">
-            {% for item in sorted_portfolio %}
-            <article class="portfolio-card portfolio-list-card" onclick="location.href='{{ item.url | relative_url }}'">
-                {% if item.thumbnail %}
-                <div class="portfolio-thumb">
-                    <img src="{{ item.thumbnail | relative_url }}" alt="{{ item.title }}">
-                </div>
-                {% endif %}
-                <div class="portfolio-body">
-                    <div class="card-date">{{ item.date | date: "%Y. %m. %d." }}</div>
-                    <h3 class="serif">{{ item.title }}</h3>
-                    <p>{{ item.excerpt }}</p>
-                </div>
-            </article>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">아직 등록된 포트폴리오가 없습니다.</div>
-        {% endif %}
-
-        <div class="back-home-wrap">
-            <a href="{{ '/' | relative_url }}" class="back-to">← Home으로 돌아가기</a>
-        </div>
-        
-    </div>
+<section class="entry-page">
+  <div class="entry-wrap">
+    <p class="eyebrow">Redirect</p>
+    <h1 class="entry-title">이 페이지는 더 이상 사용하지 않습니다.</h1>
+    <p class="entry-description">현재 구조는 글 모음, 책, 영화 세 섹션으로 정리되어 있습니다.</p>
+    <a class="button-primary" href="{{ '/blog/' | relative_url }}">글 모음으로 가기</a>
+  </div>
 </section>
