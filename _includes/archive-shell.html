@@ -62,7 +62,8 @@
                   <div class="archive-row-meta">
                     <span>{{ item.date | date: "%Y.%m.%d" }}</span>
                     {% if item.tags and item.tags.size > 0 %}
-                      <span class="archive-row-tags">{% for tag in item.tags limit: 3 %}#{{ tag }}{% unless forloop.last %} {% endunless %}{% endfor %}</span>
+                      <span class="archive-row-tags">{% for tag in item.tags limit: 3 %}#{{ tag }}{% unless forloop.last %}&nbsp;{% endunless %}{% endfor %}</span>
+
                     {% endif %}
                   </div>
                 </div>
