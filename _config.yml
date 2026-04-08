@@ -1,12 +1,12 @@
 title: "서낭"
-description: "서낭의 글과 감상을 담는 공간"
+description: "글과 감상을 담는 공간"
 url: "https://seonang.kr"
 baseurl: ""
 timezone: "Asia/Seoul"
 lang: "ko"
 markdown: kramdown
 permalink: /blog/:year/:month/:day/:title/
-contact_email: "ceo@seonang.kr"
+contact_email: ""
 coffee_chat_url: "/contact/#contact-form"
 
 collections:
