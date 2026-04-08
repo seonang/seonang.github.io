@@ -2,76 +2,10 @@
 layout: default
 title: 영화
 permalink: /movies/
-section: movies
-description: 영화 메모와 감상을 모아둔 아카이브
+section: blog
+archive_title: 서낭
+archive_subtitle: 영화 분류 글 모음.
+count_label: 영화
+category_filter: movie
 ---
-{% assign items = site.movies | where_exp: "item", "item.placeholder != true" %}
-{% capture tag_pool %}{% for item in items %}{% for tag in item.tags %}{{ tag | slugify }}::{{ tag }}|{% endfor %}{% endfor %}{% endcapture %}
-{% assign all_tags = tag_pool | split: '|' | uniq | sort %}
-
-<section class="archive-page" data-archive-root>
-  <div class="archive-shell">
-    <aside class="archive-sidebar">
-      <div class="archive-sidebar-inner">
-        <p class="eyebrow">Archive</p>
-        <h1 class="archive-title">영화</h1>
-        <p class="archive-description">장면, 대사, 여운이 남은 영화를 모아봅니다.</p>
-
-        <label class="archive-search">
-          <span>검색</span>
-          <input type="text" placeholder="영화 제목, 감독, 태그 검색" data-archive-search>
-        </label>
-
-        <div class="archive-tags">
-          <div class="archive-tags-head">태그</div>
-          <div class="tag-filter-list">
-            <button type="button" class="tag-filter is-active" data-tag-filter="all">전체</button>
-            {% for tag_item in all_tags %}
-              {% unless tag_item == '' %}
-                {% assign pair = tag_item | split: '::' %}
-                <button type="button" class="tag-filter" data-tag-filter="{{ pair[0] }}">#{{ pair[1] }}</button>
-              {% endunless %}
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <div class="archive-content">
-      <div class="archive-summary">
-        <span><strong data-archive-count>{{ items | size }}</strong>개의 기록</span>
-      </div>
-
-      {% if items.size > 0 %}
-        <div class="archive-list">
-          {% for item in items %}
-            {% capture search_text %}
-              {{ item.title }} {{ item.director }} {{ item.description }} {{ item.excerpt | strip_html }} {% for tag in item.tags %}{{ tag }} {% endfor %}
-            {% endcapture %}
-            {% capture tag_slugs %}{% for tag in item.tags %}{{ tag | slugify }}|{% endfor %}{% endcapture %}
-            <article class="archive-card" data-archive-card data-search="{{ search_text | strip | downcase | escape }}" data-tags="{{ tag_slugs | strip }}">
-              <a class="archive-card-link" href="{{ item.url | relative_url }}">
-                <div class="archive-card-meta">
-                  {% if item.director %}<span>{{ item.director }}</span>{% endif %}
-                  {% if item.date %}<span>{{ item.date | date: "%Y.%m.%d" }}</span>{% endif %}
-                </div>
-                <h2>{{ item.title }}</h2>
-                <p>{{ item.description | default: item.excerpt | strip_html | truncatewords: 28 }}</p>
-                {% if item.tags and item.tags.size > 0 %}
-                  <div class="tag-list compact">
-                    {% for tag in item.tags %}
-                      <span class="tag-chip">#{{ tag }}</span>
-                    {% endfor %}
-                  </div>
-                {% endif %}
-              </a>
-            </article>
-          {% endfor %}
-        </div>
-        <div class="empty-panel" data-archive-empty hidden>조건에 맞는 영화 기록이 없습니다.</div>
-      {% else %}
-        <div class="empty-panel">아직 영화 기록이 없습니다.</div>
-      {% endif %}
-    </div>
-  </div>
-</section>
+{% include archive-shell.html %}
