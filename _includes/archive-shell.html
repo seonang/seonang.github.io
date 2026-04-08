@@ -12,7 +12,6 @@
   <div class="archive-page-head">
     <div class="archive-page-title-wrap">
       <h1 class="archive-page-title">{{ page.archive_title | default: '서낭' }}</h1>
-      <p class="archive-page-subtitle">{{ page.archive_subtitle | default: '존재, 일상, 경영, 철학, 영화, 책을 기록하는 블로그.' }}</p>
     </div>
     <form class="top-search" action="{{ '/search/' | relative_url }}" method="get">
       <input type="text" name="q" value="{{ page.search_query | default: '' }}" placeholder="Search..." data-archive-search>

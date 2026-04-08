@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  <meta name="theme-color" content="#14263f">
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+</head>
+<body class="page-{{ page.section | default: page.layout | default: 'default' }}">
+  {% include site-header.html %}
+
+  <main class="site-main">
+    {{ content }}
+  </main>
+
+  <div class="chat-modal" id="chat-modal" hidden>
+    <div class="chat-modal-backdrop" data-close-chat-modal></div>
+    <div class="chat-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="chat-modal-title">
+      <button type="button" class="chat-modal-close" data-close-chat-modal aria-label="닫기">×</button>
+      <p class="page-kicker">Coffee Chat</p>
+      <h2 id="chat-modal-title">커피챗 신청 / 문의</h2>
+      <p class="chat-modal-description">성함, 연락처, 문의 내용을 남겨주시면 확인 후 회신드리겠습니다.</p>
+
+      <form id="chat-modal-form" class="contact-form minimal-form">
+        <div class="form-row">
+          <label for="modal-name">성함</label>
+          <input type="text" id="modal-name" name="name" required>
+        </div>
+
+        <div class="form-row">
+          <label for="modal-contact">연락처</label>
+          <input type="text" id="modal-contact" name="contact" placeholder="이메일 또는 전화번호" required>
+        </div>
+
+        <div class="form-row">
+          <label for="modal-message">문의 내용</label>
+          <textarea id="modal-message" name="message" rows="8" placeholder="커피챗 신청 또는 문의 내용을 적어주세요." required></textarea>
+        </div>
+
+        <button type="submit" class="dark-button full-width">문의 남기기</button>
+        <p id="chat-modal-status" class="form-status"></p>
+      </form>
+    </div>
+  </div>
+
+  {% include site-footer.html %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modal = document.getElementById('chat-modal');
+      const modalForm = document.getElementById('chat-modal-form');
+      const modalStatus = document.getElementById('chat-modal-status');
+
+      function openModal() {
+        if (!modal) return;
+        modal.hidden = false;
+        document.body.classList.add('modal-open');
+      }
+
+      function closeModal() {
+        if (!modal) return;
+        modal.hidden = true;
+        document.body.classList.remove('modal-open');
+      }
+
+      document.querySelectorAll('[data-open-chat-modal]').forEach(function (button) {
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          openModal();
+        });
+      });
+
+      document.querySelectorAll('[data-close-chat-modal]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          closeModal();
+        });
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal && !modal.hidden) {
+          closeModal();
+        }
+      });
+
+      if (modalForm) {
+        const submitBtn = modalForm.querySelector('button[type="submit"]');
+
+        modalForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+
+          const payload = {
+            name: modalForm.name.value.trim(),
+            contact: modalForm.contact.value.trim(),
+            message: modalForm.message.value.trim()
+          };
+
+          if (!payload.name || !payload.contact || !payload.message) {
+            modalStatus.textContent = '모든 항목을 입력해 주세요.';
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = '전송 중...';
+          modalStatus.textContent = '';
+
+          try {
+            const response = await fetch('https://seonang-contact-worker.ceo-21b.workers.dev', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+              throw new Error(result.error || '전송 중 오류가 발생했습니다.');
+            }
+
+            modalForm.reset();
+            modalStatus.textContent = '문의가 정상적으로 접수되었습니다.';
+          } catch (error) {
+            modalStatus.textContent = error.message || '전송 중 오류가 발생했습니다.';
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '문의 남기기';
+          }
+        });
+      }
+
+      document.querySelectorAll('[data-archive-root]').forEach(function (root) {
+        const searchInput = root.querySelector('[data-archive-search]');
+        const countNode = root.querySelector('[data-archive-count]');
+        const emptyNode = root.querySelector('[data-archive-empty]');
+        const cards = Array.from(root.querySelectorAll('[data-archive-card]'));
+        const tagButtons = Array.from(root.querySelectorAll('[data-tag-filter]'));
+        const categoryCountNodes = Array.from(root.querySelectorAll('[data-category-count]'));
+        const defaultCategory = (root.dataset.defaultCategory || 'all').toLowerCase();
+        const isSearchPage = root.dataset.searchPage === 'true';
+        const searchParams = new URLSearchParams(window.location.search);
+
+        if (!cards.length) return;
+
+        let activeTag = 'all';
+        let activeCategory = defaultCategory;
+        let keyword = isSearchPage ? (searchParams.get('q') || '') : '';
+
+        function normalize(value) {
+          return (value || '').toString().toLowerCase().trim();
+        }
+
+        function updateCategoryCounts() {
+          categoryCountNodes.forEach(function (node) {
+            const category = node.dataset.categoryCount || 'all';
+            const total = cards.filter(function (card) {
+              return category === 'all' || normalize(card.dataset.category) === category;
+            }).length;
+            node.textContent = total;
+          });
+        }
+
+        function applyFilter() {
+          const normalizedKeyword = normalize(keyword);
+          let visibleCount = 0;
+
+          cards.forEach(function (card) {
+            const haystack = normalize(card.dataset.search);
+            const tags = normalize(card.dataset.tags).split('|').filter(Boolean);
+            const category = normalize(card.dataset.category);
+
+            const matchKeyword = !normalizedKeyword || haystack.indexOf(normalizedKeyword) !== -1;
+            const matchTag = activeTag === 'all' || tags.includes(activeTag);
+            const matchCategory = activeCategory === 'all' || category === activeCategory;
+            const visible = matchKeyword && matchTag && matchCategory;
+
+            card.classList.toggle('is-hidden', !visible);
+            if (visible) visibleCount += 1;
+          });
+
+          if (countNode) countNode.textContent = visibleCount;
+          if (emptyNode) emptyNode.hidden = visibleCount !== 0;
+        }
+
+        tagButtons.forEach(function (button) {
+          button.addEventListener('click', function () {
+            activeTag = button.dataset.tagFilter || 'all';
+            tagButtons.forEach(function (node) {
+              node.classList.toggle('is-active', node === button);
+            });
+            applyFilter();
+          });
+        });
+
+        if (searchInput) {
+          searchInput.value = keyword;
+          if (isSearchPage) {
+            searchInput.addEventListener('input', function () {
+              keyword = searchInput.value || '';
+              applyFilter();
+            });
+          }
+        }
+
+        updateCategoryCounts();
+        applyFilter();
+      });
+    });
+  </script>
+</body>
+</html>
