@@ -7,17 +7,17 @@ layout: default
 {% if derived_section_label == nil or derived_section_label == '' or derived_section_url == nil or derived_section_url == '' %}
   {% if page.archive_category == 'book' %}
     {% assign derived_section_label = '책' %}
-    {% assign derived_section_url = '/books/' %}
+    {% assign derived_section_url = '/category/책/' %}
   {% elsif page.archive_category == 'movie' %}
     {% assign derived_section_label = '영화' %}
-    {% assign derived_section_url = '/movies/' %}
+    {% assign derived_section_url = '/category/영화/' %}
   {% elsif page.archive_category == 'management' %}
     {% assign derived_section_label = '경영' %}
     {% assign derived_section_url = '/category/경영/' %}
   {% elsif page.archive_category == 'philosophy' %}
     {% assign derived_section_label = '철학' %}
     {% assign derived_section_url = '/category/철학/' %}
-  {% elsif page.archive_category == 'diary' %}
+      {% elsif page.archive_category == 'diary' %}
     {% assign derived_section_label = '일기' %}
     {% assign derived_section_url = '/category/일기/' %}
   {% else %}
