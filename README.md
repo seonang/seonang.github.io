@@ -3,10 +3,13 @@
 미니멀 블로그 구조 메모.
 
 ## 구조
-- 홈: `index.html`
-- 글 모음: `blog.html` + `_posts/`
-- 책: `books.html` + `_books/`
-- 영화: `movies.html` + `_movies/`
+- 홈: `index.html` (`/`)
+- 블로그 메인: `blog.html` (`/blog/`)
+- 검색: `search.html` (`/search/?q=검색어`)
+- 카테고리: `category/<카테고리>/index.html`
+- 책: `books.html` (`/books/`)
+- 영화: `movies.html` (`/movies/`)
+- 공통 아카이브 UI: `_includes/archive-shell.html`
 - 공통 단일 글 레이아웃: `_layouts/entry.html`
 - 공통 스타일: `assets/css/site.css`
 
@@ -19,11 +22,17 @@
 title: "제목"
 description: "짧은 소개"
 date: 2026-04-08 22:00:00 +0900
-tags: [존재, 비즈니스, 일상관찰]
+archive_category: management
+tags: [경영, 전략, 조직]
 ---
 
 본문을 씁니다.
 ```
+
+`archive_category` 값은 아래 중 하나를 권장합니다.
+- `diary`
+- `management`
+- `philosophy`
 
 파일 경로 예시:
 - `_posts/2026-04-08-my-post.md`

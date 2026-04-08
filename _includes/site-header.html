@@ -1,15 +1,5 @@
 <header class="site-header">
   <div class="site-header-inner">
-    <a href="{{ '/' | relative_url }}" class="site-brand">
-      <span class="site-brand-ko">서낭</span>
-      <span class="site-brand-en">SEONANG</span>
-    </a>
-
-    <nav class="site-nav" aria-label="주요 메뉴">
-      <a href="{{ '/' | relative_url }}" class="{% if page.section == 'home' %}is-active{% endif %}">홈</a>
-      <a href="{{ '/blog/' | relative_url }}" class="{% if page.section == 'blog' %}is-active{% endif %}">글 모음</a>
-      <a href="{{ '/books/' | relative_url }}" class="{% if page.section == 'books' %}is-active{% endif %}">책</a>
-      <a href="{{ '/movies/' | relative_url }}" class="{% if page.section == 'movies' %}is-active{% endif %}">영화</a>
-    </nav>
+    <a href="{{ '/' | relative_url }}" class="site-brand">서낭 <span>(Seonang)</span></a>
   </div>
 </header>

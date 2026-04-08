@@ -1,0 +1,108 @@
+{% assign visible_posts = site.posts | where_exp: "item", "item.placeholder != true" %}
+{% assign visible_books = site.books | where_exp: "item", "item.placeholder != true" %}
+{% assign visible_movies = site.movies | where_exp: "item", "item.placeholder != true" %}
+{% assign all_items = visible_posts | concat: visible_books | concat: visible_movies | sort: 'date' | reverse %}
+{% assign management_count = visible_posts | where: 'archive_category', 'management' | size %}
+{% assign philosophy_count = visible_posts | where: 'archive_category', 'philosophy' | size %}
+{% assign diary_count = visible_posts.size | minus: management_count | minus: philosophy_count %}
+{% capture tag_pool %}{% for item in all_items %}{% for tag in item.tags %}{{ tag | slugify }}::{{ tag }}|{% endfor %}{% endfor %}{% endcapture %}
+{% assign all_tags = tag_pool | split: '|' | uniq | sort %}
+
+<section class="archive-page reference-style" data-archive-root data-default-category="{{ page.category_filter | default: 'all' }}" data-search-page="{% if page.search_page %}true{% else %}false{% endif %}">
+  <div class="archive-page-head">
+    <div class="archive-page-title-wrap">
+      <h1 class="archive-page-title">{{ page.archive_title | default: '서낭' }}</h1>
+      <p class="archive-page-subtitle">{{ page.archive_subtitle | default: '존재, 일상, 경영, 철학, 영화, 책을 기록하는 블로그.' }}</p>
+    </div>
+    <form class="top-search" action="{{ '/search/' | relative_url }}" method="get">
+      <input type="text" name="q" value="{{ page.search_query | default: '' }}" placeholder="Search..." data-archive-search>
+    </form>
+  </div>
+
+  <div class="archive-layout">
+    <div class="archive-main">
+      <p class="archive-total">{{ page.count_label | default: '전체보기' }} <strong data-archive-count>{{ all_items | size }}</strong></p>
+
+      {% if all_items.size > 0 %}
+        <div class="archive-rows">
+          {% for item in all_items %}
+            {% assign category_key = '' %}
+            {% assign category_label = '' %}
+            {% if item.collection == 'books' %}
+              {% assign category_key = 'book' %}
+              {% assign category_label = '책' %}
+            {% elsif item.collection == 'movies' %}
+              {% assign category_key = 'movie' %}
+              {% assign category_label = '영화' %}
+            {% elsif item.archive_category == 'management' %}
+              {% assign category_key = 'management' %}
+              {% assign category_label = '경영' %}
+            {% elsif item.archive_category == 'philosophy' %}
+              {% assign category_key = 'philosophy' %}
+              {% assign category_label = '철학' %}
+            {% else %}
+              {% assign category_key = 'diary' %}
+              {% assign category_label = '일기' %}
+            {% endif %}
+
+            {% capture search_text %}{{ item.title }} {{ item.description }} {{ item.author }} {{ item.director }} {{ item.excerpt | strip_html }} {% for tag in item.tags %}{{ tag }} {% endfor %}{% endcapture %}
+            {% capture tag_slugs %}{% for tag in item.tags %}{{ tag | slugify }}|{% endfor %}{% endcapture %}
+            <article class="archive-row" data-archive-card data-category="{{ category_key }}" data-search="{{ search_text | strip | downcase | escape }}" data-tags="{{ tag_slugs | strip }}">
+              <a class="archive-row-link" href="{{ item.url | relative_url }}">
+                <div class="archive-row-thumb archive-row-thumb-placeholder">{{ category_label }}</div>
+                <div class="archive-row-body">
+                  <div class="archive-row-category">{{ category_label }}</div>
+                  <h2>{{ item.title }}</h2>
+                  <p>{{ item.description | default: item.excerpt | strip_html | truncatewords: 34 }}</p>
+                  <div class="archive-row-meta">
+                    <span>{{ item.date | date: "%Y.%m.%d" }}</span>
+                    {% if item.tags and item.tags.size > 0 %}
+                      <span>{% for tag in item.tags limit: 3 %}#{{ tag }}{% unless forloop.last %} / {% endunless %}{% endfor %}</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+        <div class="empty-note" data-archive-empty hidden>조건에 맞는 글이 없습니다.</div>
+      {% else %}
+        <div class="empty-note">아직 공개된 글이 없습니다.</div>
+      {% endif %}
+    </div>
+
+    <aside class="archive-aside">
+      <div class="aside-card author-card">
+        <div class="author-avatar">서</div>
+        <h2>서낭 (Seonang)</h2>
+        <p>경계와 존재를 오래 붙잡고 쓰는 블로그.</p>
+        <a class="author-email" href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a>
+        <a class="dark-button full-width" href="#" data-open-chat-modal>커피챗 하기</a>
+      </div>
+
+      <div class="aside-card category-card">
+        <h3>분류</h3>
+        <div class="category-list">
+          <a class="category-link{% if page.category_filter == 'all' or page.category_filter == nil and page.search_page != true %} is-active{% endif %}" href="{{ '/' | relative_url }}" data-category-filter="all">전체보기 <span data-category-count="all">{{ all_items | size }}</span></a>
+          <a class="category-link{% if page.category_filter == 'diary' %} is-active{% endif %}" href="{{ '/category/일기/' | relative_url }}" data-category-filter="diary">일기 <span data-category-count="diary">{{ diary_count }}</span></a>
+          <a class="category-link{% if page.category_filter == 'management' %} is-active{% endif %}" href="{{ '/category/경영/' | relative_url }}" data-category-filter="management">경영 <span data-category-count="management">{{ management_count }}</span></a>
+          <a class="category-link{% if page.category_filter == 'philosophy' %} is-active{% endif %}" href="{{ '/category/철학/' | relative_url }}" data-category-filter="philosophy">철학 <span data-category-count="philosophy">{{ philosophy_count }}</span></a>
+          <a class="category-link{% if page.category_filter == 'movie' %} is-active{% endif %}" href="{{ '/category/영화/' | relative_url }}" data-category-filter="movie">영화 <span data-category-count="movie">{{ visible_movies | size }}</span></a>
+          <a class="category-link{% if page.category_filter == 'book' %} is-active{% endif %}" href="{{ '/category/책/' | relative_url }}" data-category-filter="book">책 <span data-category-count="book">{{ visible_books | size }}</span></a>
+        </div>
+      </div>
+
+      <div class="aside-card">
+        <h3>태그</h3>
+        <div class="aside-tag-list">
+          {% for tag_item in all_tags %}
+            {% unless tag_item == '' %}
+              {% assign pair = tag_item | split: '::' %}
+              <a class="tag-chip" href="{{ '/search/' | relative_url }}?q={{ pair[1] | uri_escape }}">#{{ pair[1] }}</a>
+            {% endunless %}
+          {% endfor %}
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
